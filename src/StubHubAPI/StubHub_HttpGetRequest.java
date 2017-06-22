@@ -1,9 +1,10 @@
 package StubHubAPI;
 
 //import StubHubAPI.AccountManagementAPI.GET.*;
-//import StubHubAPI.EventsAPI.GET.*;
+import StubHubAPI.EventsAPI.GET.*;
 //import StubHubAPI.EventSearchAPI.GET.*;
 //import StubHubAPI.InventorySearchAPI.GET.*;
+import StubHubAPI.InventorySearchAPI.GET.Find_Listings_For_Event;
 import StubHubAPI.ListingsAPI.GET.*;
 //import StubHubAPI.UserManagementAPI.GET.*;
 import StubHubAPI.VenuesAPI.GET.*;
@@ -28,8 +29,19 @@ public class StubHub_HttpGetRequest {
 
     //Run code - For testing only
     public static void main(String[] args) throws Exception {
-        getListingInfo("1262873057");
+        //LISTINGS V2 API
+        //getListingInfo("1262873057");
+
+
+        //VENUES V2 API
         //getVenueInfo("180239");
+
+        //EVENTS V2 API
+        //getEventInfo("9693644");
+
+
+        //INVENTORY_SEARCH V2 API
+        findListingsForEvent("9693644");
     }
 
 
@@ -48,14 +60,12 @@ public class StubHub_HttpGetRequest {
             HttpClient client = new DefaultHttpClient();
             client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
 
-
-
             HttpGet request = new HttpGet(path);
 
             // add request headers
             String token = "16ede3a5-ad0f-3042-991a-adb3e2e2754a";
             request.setHeader("Authorization", "Bearer " + token);
-            request.setHeader("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Mobile Safari/537.36");
+            request.setHeader("User-Agent", "Mozilla/5.0");
 
             //Execute request
             HttpResponse response = client.execute(request);
@@ -82,7 +92,7 @@ public class StubHub_HttpGetRequest {
                 System.out.println();
 
                 JSONObject xmlJSONObj = XML.toJSONObject(result.toString());
-                int code = loadIntoDB(xmlJSONObj, collectionName);
+                String code = loadIntoDB(xmlJSONObj, collectionName);
 
                 System.out.println();
                 System.out.println("Mongo Response Code: " + code);
@@ -104,14 +114,14 @@ public class StubHub_HttpGetRequest {
     /*
     * Load data into database.
     * Return codes:
-    *   100 - Success
-    *   200 - Database connection error
-    *   225 - Database does not exist
-    *   250 - Collection does not exist
-    *   300 - Duplicate
-    *   400 - Unknown error
+    *               OK - Success
+    *    DB Conn Error - Database connection error
+    *           DB DNE - Database does not exist
+    *   Collection DNE - Collection does not exist
+    *        Duplicate - Entry already exists
+    *          Unknown - Unknown Error
     */
-    private int loadIntoDB(JSONObject json, String collectionName) {
+    private String loadIntoDB(JSONObject json, String collectionName) {
         try {
             // Initialize variables
             System.out.println("Connecting to database.....");
@@ -123,13 +133,13 @@ public class StubHub_HttpGetRequest {
                 mongoClient.getAddress();
             } catch(Exception e) {
                 System.out.println("Connection to database failed. Process aborted.");
-                return 200;
+                return "DB Conn Error";
             }
 
             //Confirm database exists
             if (databaseDoesNotExist(mongoClient)) {
                 System.out.println("Database does not exist. Process aborted.");
-                return 225;
+                return "DB DNE";
             }
 
             System.out.println("Connection to database successful!");
@@ -139,7 +149,7 @@ public class StubHub_HttpGetRequest {
             System.out.println("Connecting to collection.....");
             if (collectionDoesNotExist(db, collectionName)) {
                 System.out.println("Collection does not exist. Process aborted.");
-                return 250;
+                return "Collection DNE";
             }
 
             DBCollection collection = db.getCollection(collectionName);
@@ -152,7 +162,7 @@ public class StubHub_HttpGetRequest {
             //Confirm this entry is not duplicate
             if (duplicateEntry(collection, dbObj)) {
                 System.out.println("Entry already exists. Process aborted.");
-                return 300;
+                return "Duplicate";
             }
 
             //Enter information into db
@@ -160,10 +170,10 @@ public class StubHub_HttpGetRequest {
             collection.insert(dbObj);
             System.out.println("Data insertion successful!");
 
-            return 100;
+            return "OK";
         } catch(Exception e) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            return 400;
+            return "Unknown";
         }
     }
 
@@ -240,8 +250,9 @@ public class StubHub_HttpGetRequest {
     /*
      * Get event information.
      */
-    private static void getEventInfo() {
-        //Call Get_Event_Info
+    private static void getEventInfo(String eventID) {
+        Get_Event_Info http = new Get_Event_Info();
+        http.getRequestData(eventID);
     }
 
     /*
@@ -263,8 +274,10 @@ public class StubHub_HttpGetRequest {
     /*
      * Find listings for a certain event.
      */
-    private static void findListingsForEvent() {
+    private static void findListingsForEvent(String eventID) {
         //Call Find_Listings_For_Event
+        Find_Listings_For_Event http = new Find_Listings_For_Event();
+        http.getRequestData(eventID);
     }
 
 
