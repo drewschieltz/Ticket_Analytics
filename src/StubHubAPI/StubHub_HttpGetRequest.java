@@ -4,7 +4,7 @@ package StubHubAPI;
 //import StubHubAPI.EventsAPI.GET.*;
 //import StubHubAPI.EventSearchAPI.GET.*;
 //import StubHubAPI.InventorySearchAPI.GET.*;
-//import StubHubAPI.ListingsAPI.GET.*;
+import StubHubAPI.ListingsAPI.GET.*;
 //import StubHubAPI.UserManagementAPI.GET.*;
 import StubHubAPI.VenuesAPI.GET.*;
 
@@ -20,24 +20,23 @@ import org.json.XML;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.CookieStore;
 import java.util.List;
 import java.util.Set;
 
 public class StubHub_HttpGetRequest {
 
-    //Fields
-    public final String token = "16ede3a5-ad0f-3042-991a-adb3e2e2754a";
-
-
     //Run code - For testing only
     public static void main(String[] args) throws Exception {
-        getVenueInfo("180239");
+        getListingInfo("1262873057");
+        //getVenueInfo("180239");
     }
 
 
     /*******************************************************
      * Send Get Request
      ******************************************************/
+
 
     public void sendGetRequest(String path, String collectionName) {
 
@@ -48,12 +47,15 @@ public class StubHub_HttpGetRequest {
             //Set up client & request
             HttpClient client = new DefaultHttpClient();
             client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
+
+
+
             HttpGet request = new HttpGet(path);
 
             // add request headers
             String token = "16ede3a5-ad0f-3042-991a-adb3e2e2754a";
-            request.addHeader("Authorization", "Bearer " + token);
-            request.addHeader("User-Agent", "Mozilla/5.0");
+            request.setHeader("Authorization", "Bearer " + token);
+            request.setHeader("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Mobile Safari/537.36");
 
             //Execute request
             HttpResponse response = client.execute(request);
@@ -85,10 +87,11 @@ public class StubHub_HttpGetRequest {
                 System.out.println();
                 System.out.println("Mongo Response Code: " + code);
             } else {
+                System.out.println();
                 System.out.println("Data retrieval unsuccessful!");
             }
         } catch (Exception e) {
-            System.out.println("Error retrieving venue information");
+            System.out.println("Error retrieving data. Process aborted.");
             e.printStackTrace();
         }
     }
@@ -124,7 +127,7 @@ public class StubHub_HttpGetRequest {
             }
 
             //Confirm database exists
-            if (databaseDoesNotExist(mongoClient, "StubHub")) {
+            if (databaseDoesNotExist(mongoClient)) {
                 System.out.println("Database does not exist. Process aborted.");
                 return 225;
             }
@@ -168,11 +171,11 @@ public class StubHub_HttpGetRequest {
     /*
      * Determine if the collection already exists.
      */
-    private boolean databaseDoesNotExist(MongoClient mongo, String dbName) {
+    private boolean databaseDoesNotExist(MongoClient mongo) {
         List<String> names = mongo.getDatabaseNames();
 
         for (final String name : names) {
-            if (name.equals(dbName)) {
+            if (name.equals("StubHub")) {
                 return false;
             }
         }
@@ -213,7 +216,7 @@ public class StubHub_HttpGetRequest {
     /*
      * Get a single listing from my account.
      */
-    public void getListing() {
+    private static void getListing() {
         //Call Get_Listing
     }
 
@@ -221,7 +224,7 @@ public class StubHub_HttpGetRequest {
     /*
      * Get all listings from my account.
      */
-    public void getAllListings() {
+    private static void getAllListings() {
         //Call Get_All_Listings
     }
 
@@ -229,7 +232,7 @@ public class StubHub_HttpGetRequest {
     /*
      * Get all sales from my account.
      */
-    public void getAllSales() {
+    private static void getAllSales() {
         //Call Get_All_Sales
     }
 
@@ -237,14 +240,14 @@ public class StubHub_HttpGetRequest {
     /*
      * Get event information.
      */
-    public void getEventInfo() {
+    private static void getEventInfo() {
         //Call Get_Event_Info
     }
 
     /*
      * Get event meta data.
      */
-    public void getEventMetaData() {
+    private static void getEventMetaData() {
         //Call Get_Evet_MetaData
     }
 
@@ -252,7 +255,7 @@ public class StubHub_HttpGetRequest {
     /*
      * Find events based on certain criterion.
      */
-    public void findEvents() {
+    private static void findEvents() {
         //Call Find_Events
     }
 
@@ -260,7 +263,7 @@ public class StubHub_HttpGetRequest {
     /*
      * Find listings for a certain event.
      */
-    public void findListingsForEvent() {
+    private static void findListingsForEvent() {
         //Call Find_Listings_For_Event
     }
 
@@ -268,7 +271,7 @@ public class StubHub_HttpGetRequest {
     /*
      * For information about certain sections for an event.
      */
-    public void findSectionDataForEvent() {
+    private static void findSectionDataForEvent() {
         //Call Find_Section_Data_For_Event
     }
 
@@ -276,7 +279,7 @@ public class StubHub_HttpGetRequest {
     /*
      * Search for a specific listing.
      */
-    public void searchForListing() {
+    private static void searchForListing() {
         //Call Search_For_Listing
     }
 
@@ -284,15 +287,16 @@ public class StubHub_HttpGetRequest {
     /*
      * Get listing information.
      */
-    public void getListingInfo() {
-        //Call Get_Listing_Info
+    private static void getListingInfo(String listingID) {
+        Get_Listing_Info http = new Get_Listing_Info();
+        http.getRequestData(listingID);
     }
 
 
     /*
      * Get a specific price alert.
      */
-    public void getPriceAlert() {
+    private static void getPriceAlert() {
         //Call Get_Price_Alert
     }
 
@@ -300,7 +304,7 @@ public class StubHub_HttpGetRequest {
     /*
      * Get all of my price alerts.
      */
-    public void getPriceAlerts() {
+    private static void getPriceAlerts() {
         //Call Get_Price_Alerts
     }
 

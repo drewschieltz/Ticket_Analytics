@@ -38,15 +38,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/httpclient-4.2.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/json-lib.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -95,6 +86,15 @@
       <library>
         <CLASSES>
           <root url="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/slf4j-nop-1.7.12.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/httpclient-4.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
