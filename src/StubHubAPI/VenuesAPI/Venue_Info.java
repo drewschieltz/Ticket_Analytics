@@ -1,4 +1,4 @@
-package StubHubAPI.VenuesAPI.GET;
+package StubHubAPI.VenuesAPI;
 
 import StubHubAPI.StubHub_HttpGetRequest;
 import org.apache.http.HttpResponse;

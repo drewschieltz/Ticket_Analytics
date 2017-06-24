@@ -1,4 +1,4 @@
-package StubHubAPI.EventsAPI.GET;
+package StubHubAPI.EventsAPI;
 
 import StubHubAPI.StubHub_HttpGetRequest;
 

@@ -1,4 +1,4 @@
-package StubHubAPI.ListingsAPI.GET;
+package StubHubAPI.ListingsAPI;
 
 import StubHubAPI.StubHub_HttpGetRequest;
 

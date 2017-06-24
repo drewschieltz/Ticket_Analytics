@@ -1,14 +1,10 @@
 package StubHubAPI;
 
-//import StubHubAPI.AccountManagementAPI.GET.*;
-import StubHubAPI.EventsAPI.GET.*;
-//import StubHubAPI.EventSearchAPI.GET.*;
-//import StubHubAPI.InventorySearchAPI.GET.*;
-import StubHubAPI.InventorySearchAPI.GET.Find_Listings_For_Event;
-import StubHubAPI.ListingsAPI.GET.*;
-//import StubHubAPI.UserManagementAPI.GET.*;
-import StubHubAPI.VenuesAPI.GET.*;
+import StubHubAPI.EventsAPI.Get_Event_Info;
+import StubHubAPI.ListingsAPI.Get_Listing_Info;
+import StubHubAPI.SearchAPI.Find_Listings_For_Event;
 
+import StubHubAPI.VenuesAPI.Venue_Info;
 import com.mongodb.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,27 +17,29 @@ import org.json.XML;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.CookieStore;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class StubHub_HttpGetRequest {
 
     //Run code - For testing only
     public static void main(String[] args) throws Exception {
-        //LISTINGS V2 API
-        //getListingInfo("1262873057");
+        /*LISTINGS V2 API*/
+        //getListingInfo("1261109138");
 
-
-        //VENUES V2 API
+        /*VENUES V2 API*/
         //getVenueInfo("180239");
 
-        //EVENTS V2 API
+        /*EVENTS V2 API*/
         //getEventInfo("9693644");
 
+        /*SEARCH V2 API*/
 
-        //INVENTORY_SEARCH V2 API
-        findListingsForEvent("9693644");
+        //Map<String, String> params = new HashMap<String, String>() {};
+        //params.put("quantity", "8");
+        //params.put("pricemin", "150");
+        //findListingsForEvent("9693644", params);
+
+        
     }
 
 
@@ -63,7 +61,7 @@ public class StubHub_HttpGetRequest {
             HttpGet request = new HttpGet(path);
 
             // add request headers
-            String token = "16ede3a5-ad0f-3042-991a-adb3e2e2754a";
+            String token = "eaf08ffb-ef73-301f-bac0-94d3d471eec0";
             request.setHeader("Authorization", "Bearer " + token);
             request.setHeader("User-Agent", "Mozilla/5.0");
 
@@ -71,8 +69,11 @@ public class StubHub_HttpGetRequest {
             HttpResponse response = client.execute(request);
 
             System.out.println("\nSending 'GET' request to URL : " + path);
+
             int respCode = response.getStatusLine().getStatusCode();
+
             System.out.println("Response Code : " + respCode);
+            System.out.println();
             System.out.println("-------------");
 
             if (respCode == 200) {
@@ -91,11 +92,20 @@ public class StubHub_HttpGetRequest {
                 System.out.println("Pushing info into the database......");
                 System.out.println();
 
-                JSONObject xmlJSONObj = XML.toJSONObject(result.toString());
-                String code = loadIntoDB(xmlJSONObj, collectionName);
+                JSONObject json;
+
+                if (result.toString().contains("xml")) {
+                    json = XML.toJSONObject(result.toString());
+                } else {
+                    json = new JSONObject(result.toString());
+                }
+
+                String code = loadIntoDB(json, collectionName);
 
                 System.out.println();
                 System.out.println("Mongo Response Code: " + code);
+                System.out.println();
+                System.out.println("=====================================================");
             } else {
                 System.out.println();
                 System.out.println("Data retrieval unsuccessful!");
@@ -274,35 +284,19 @@ public class StubHub_HttpGetRequest {
     /*
      * Find listings for a certain event.
      */
-    private static void findListingsForEvent(String eventID) {
+    private static void findListingsForEvent(String eventID, Map<String, String> params) {
         //Call Find_Listings_For_Event
         Find_Listings_For_Event http = new Find_Listings_For_Event();
-        http.getRequestData(eventID);
-    }
-
-
-    /*
-     * For information about certain sections for an event.
-     */
-    private static void findSectionDataForEvent() {
-        //Call Find_Section_Data_For_Event
-    }
-
-
-    /*
-     * Search for a specific listing.
-     */
-    private static void searchForListing() {
-        //Call Search_For_Listing
+        http.getRequestData(eventID, params);
     }
 
 
     /*
      * Get listing information.
      */
-    private static void getListingInfo(String listingID) {
+    private static void getListingInfo(String eventID) {
         Get_Listing_Info http = new Get_Listing_Info();
-        http.getRequestData(listingID);
+        http.getRequestData(eventID);
     }
 
 
