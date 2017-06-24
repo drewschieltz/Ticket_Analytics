@@ -1,15 +1,16 @@
+//Current package
 package StubHubAPI.SearchAPI;
 
+//Project package dependencies
 import StubHubAPI.StubHub_HttpGetRequest;
 
+//Java dependencies
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * Created by ASchieltz on 6/10/2017.
- */
+
 public class Find_Listings_For_Event extends StubHub_HttpGetRequest {
+
     // HTTP GET request
     public void getRequestData(String eventID, Map<String, String> params) {
         String path;

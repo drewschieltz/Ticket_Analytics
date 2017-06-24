@@ -1,10 +1,10 @@
+//Current package
 package StubHubAPI.ListingsAPI;
 
+//Project package dependencies
 import StubHubAPI.StubHub_HttpGetRequest;
 
-/**
- * Created by ASchieltz on 6/10/2017.
- */
+
 public class Get_Listing_Info extends StubHub_HttpGetRequest {
 
     // HTTP GET request
