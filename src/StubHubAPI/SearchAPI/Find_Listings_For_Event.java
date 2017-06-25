@@ -13,17 +13,21 @@ public class Find_Listings_For_Event extends StubHub_HttpGetRequest {
 
     // HTTP GET request
     public void getRequestData(String eventID, Map<String, String> params) {
-        String path;
-        path = "https://api.stubhub.com/search/inventory/v2?eventid=" + eventID;
+        StringBuilder sb = new StringBuilder();
+        sb.append("https://api.stubhub.com/search/inventory/v2?eventid=");
+        sb.append(eventID);
 
         if (params != null) {
             Iterator iter = params.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                path += "&" + entry.getKey() + "=" + entry.getValue();
+                sb.append("&");
+                sb.append(entry.getKey());
+                sb.append("=");
+                sb.append(entry.getValue());
             }
         }
 
-        sendGetRequest(path, "Event_Listings");
+        sendGetRequest(sb.toString(), "Event_Listings");
     }
 }

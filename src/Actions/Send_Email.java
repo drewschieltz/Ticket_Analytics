@@ -2,6 +2,7 @@
 package Actions;
 
 //Java dependencies
+import java.io.*;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -13,6 +14,7 @@ public class Send_Email {
     public static void main(String [] args) {
         sendEmails();
     }
+
 
     /*
      * Send emails.
@@ -26,9 +28,11 @@ public class Send_Email {
                 });
 
         try {
-            Transport.send(formatMessage(session));
-            System.out.println();
-            System.out.println("Email(s) sent successfully!");
+            if (formatMessage(session) != null) {
+                Transport.send(formatMessage(session));
+                System.out.println();
+                System.out.println("Email(s) sent successfully!");
+            }
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
@@ -40,12 +44,25 @@ public class Send_Email {
      */
     private static ArrayList<String> credentials() {
         ArrayList<String> credentials = new ArrayList<String>();
+        String fileName = "credentials.txt";
+        String line = null;
 
-        //Add username
-        credentials.add("joe.andy.tix@gmail.com");
+        try {
+            //Set up file reader
+            FileReader reader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(reader);
 
-        //Add password
-        credentials.add("15WHwwjd02");
+            //Line 1: Email username,
+            //Line 2: Email password.
+            for(int i=0; ((line = bufferedReader.readLine()) != null); i++) {
+                credentials.add(line);
+            }
+
+            //Close the input stream.
+            bufferedReader.close();
+        } catch(Exception e) {
+            System.out.println("Failed to retrieve email credentials.");
+        }
 
         return credentials;
     }
@@ -71,13 +88,15 @@ public class Send_Email {
      */
     private static String getAddressList() {
         ArrayList<String> recipients = getRecipients();
-        String addresses = recipients.get(0);
+        StringBuilder sb = new StringBuilder();
+        sb.append(recipients.get(0));
 
         for (int i=1; i < recipients.size(); i++) {
-            addresses += "," + recipients.get(i);
+            sb.append(",");
+            sb.append(recipients.get(i));
         }
 
-        return addresses;
+        return sb.toString();
     }
 
 
@@ -88,10 +107,12 @@ public class Send_Email {
         ArrayList<String> recipients = new ArrayList<String>();
 
         recipients.add("drewschieltz@gmail.com");
+        //recipients.add("aschieltz@midmark.com");
         //recipients.add("travispulfer@gmail.com");
 
         return recipients;
     }
+
 
     /*
      * Format the email subject/body.
