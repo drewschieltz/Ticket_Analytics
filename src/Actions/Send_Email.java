@@ -18,36 +18,17 @@ public class Send_Email {
      * Send emails.
      */
     public static void sendEmails() {
-        final String username = "joe.andy.tix@gmail.com";
-        final String password = "15WHwwjd02";
-
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props,
+        Session session = Session.getInstance(properties(),
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(credentials().get(0), credentials().get(1));
                     }
                 });
 
         try {
-
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("joe.andy.tix@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(getAddresses()));
-
-            message.setSubject("Test Subject");
-            message.setText("Recipient,"
-                    + "\n\nThis is a test of the automatic email system. Please disregard.");
-
-            Transport.send(message);
-
+            Transport.send(formatMessage(session));
+            System.out.println();
             System.out.println("Email(s) sent successfully!");
-
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
@@ -55,9 +36,40 @@ public class Send_Email {
 
 
     /*
+     * Get email credentials.
+     */
+    private static ArrayList<String> credentials() {
+        ArrayList<String> credentials = new ArrayList<String>();
+
+        //Add username
+        credentials.add("joe.andy.tix@gmail.com");
+
+        //Add password
+        credentials.add("15WHwwjd02");
+
+        return credentials;
+    }
+
+
+    /*
+     * Set the mail server properties.
+     */
+    private static Properties properties() {
+        Properties props = new Properties();
+
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        return props;
+    }
+
+
+    /*
      * Format recipient string.
      */
-    private static String getAddresses() {
+    private static String getAddressList() {
         ArrayList<String> recipients = getRecipients();
         String addresses = recipients.get(0);
 
@@ -79,5 +91,27 @@ public class Send_Email {
         //recipients.add("travispulfer@gmail.com");
 
         return recipients;
+    }
+
+    /*
+     * Format the email subject/body.
+     */
+    private static Message formatMessage(Session session) {
+        Message message = new MimeMessage(session);
+
+        try {
+            message.setFrom(new InternetAddress(credentials().get(0)));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(getAddressList()));
+
+            message.setSubject("Test Subject");
+            message.setText("Recipient,"
+                    + "\n\nThis is a test of the automatic email system. Please disregard.");
+
+            return message;
+        } catch (MessagingException e) {
+            System.out.println("Message failed to generate!");
+        }
+
+        return null;
     }
 }
