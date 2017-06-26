@@ -137,7 +137,7 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
      * Get event information.
      */
     private static void getEventInfo(String eventID) {
-        Get_Event_Info http = new Get_Event_Info();
+        Event_Info http = new Event_Info();
         http.getRequestData(eventID);
     }
 
@@ -164,7 +164,7 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
      * Get listing information.
      */
     private static void getListingInfo(String eventID) {
-        Get_Listing_Info http = new Get_Listing_Info();
+        Listing_Info http = new Listing_Info();
         http.getRequestData(eventID);
     }
 

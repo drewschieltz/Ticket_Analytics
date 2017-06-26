@@ -5,7 +5,7 @@ package StubHubAPI.EventsAPI;
 import StubHubAPI.StubHub_HttpGetRequest;
 
 
-public class Get_Event_Info extends StubHub_HttpGetRequest {
+public class Event_Info extends StubHub_HttpGetRequest {
 
     // HTTP GET request
     public void getRequestData(String eventID) {

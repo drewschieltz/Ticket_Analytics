@@ -8,7 +8,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 
 
-public class Send_Email {
+public class Email {
 
     //Test code
     public static void main(String [] args) {
