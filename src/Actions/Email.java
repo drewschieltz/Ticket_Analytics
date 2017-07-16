@@ -1,6 +1,9 @@
 //Current package
 package Actions;
 
+//Package dependencies
+import Credentials.Email_Credentials;
+
 //Java dependencies
 import java.io.*;
 import java.util.*;
@@ -9,6 +12,8 @@ import javax.mail.internet.*;
 
 
 public class Email {
+
+    public static Email_Credentials credentials = new Email_Credentials();
 
     //Test code
     public static void main(String [] args) {
@@ -23,7 +28,7 @@ public class Email {
         Session session = Session.getInstance(properties(),
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(credentials().get(0), credentials().get(1));
+                        return new PasswordAuthentication(credentials.username(), credentials.password());
                     }
                 });
 
@@ -36,35 +41,6 @@ public class Email {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    /*
-     * Get email credentials.
-     */
-    private static ArrayList<String> credentials() {
-        ArrayList<String> credentials = new ArrayList<String>();
-        String fileName = "credentials.txt";
-        String line = null;
-
-        try {
-            //Set up file reader
-            FileReader reader = new FileReader(fileName);
-            BufferedReader bufferedReader = new BufferedReader(reader);
-
-            //Line 1: Email username,
-            //Line 2: Email password.
-            for(int i=0; ((line = bufferedReader.readLine()) != null); i++) {
-                credentials.add(line);
-            }
-
-            //Close the input stream.
-            bufferedReader.close();
-        } catch(Exception e) {
-            System.out.println("Failed to retrieve email credentials.");
-        }
-
-        return credentials;
     }
 
 
@@ -121,7 +97,7 @@ public class Email {
         Message message = new MimeMessage(session);
 
         try {
-            message.setFrom(new InternetAddress(credentials().get(0)));
+            message.setFrom(new InternetAddress(credentials.username()));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(getAddressList()));
 
             message.setSubject("Test Subject");

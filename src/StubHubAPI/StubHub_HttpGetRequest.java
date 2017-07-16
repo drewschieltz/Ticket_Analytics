@@ -73,7 +73,7 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
             HttpGet request = new HttpGet(path);
 
             // add request headers
-            String token = "eaf08ffb-ef73-301f-bac0-94d3d471eec0";
+            String token = token_credentials.applicationToken();
             request.setHeader("Authorization", "Bearer " + token);
             request.setHeader("User-Agent", "Mozilla/5.0");
 

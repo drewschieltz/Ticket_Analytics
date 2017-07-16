@@ -1,6 +1,9 @@
 //Current package
 package StubHubAPI;
 
+//Package dependencies
+import Credentials.Token_Credentials;
+
 //MongoDB dependencies
 import com.mongodb.*;
 
@@ -13,6 +16,8 @@ import java.util.Set;
 
 
 public class StubHub_HttpRequest {
+
+    public static Token_Credentials token_credentials = new Token_Credentials();
 
     /*******************************************************
      * Database Methods
