@@ -38,31 +38,12 @@ public class StubHub_HttpRequest {
         try {
             // Initialize variables
             System.out.println("Connecting to database.....");
-            MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+            MongoClient mongoClient = new MongoClient( "localhost" , 27017);
             DB db = mongoClient.getDB("StubHub");
 
-            //Attempt to connect to the mongo server
-            try {
-                mongoClient.getAddress();
-            } catch(Exception e) {
-                System.out.println("Connection to database failed. Process aborted.");
-                return "DB Conn Error";
-            }
-
-            //Confirm database exists
-            if (databaseDoesNotExist(mongoClient)) {
-                System.out.println("Database does not exist. Process aborted.");
-                return "DB DNE";
-            }
-
-            System.out.println("Connection to database successful!");
-            System.out.println();
-
-            //Confirm collection exists. If so, retrieve the collection
-            System.out.println("Connecting to collection.....");
-            if (collectionDoesNotExist(db, collectionName)) {
-                System.out.println("Collection does not exist. Process aborted.");
-                return "Collection DNE";
+            String validation = validateDatabase(mongoClient, db, collectionName);
+            if (!validation.isEmpty()) {
+                return validation;
             }
 
             DBCollection collection = db.getCollection(collectionName);
@@ -92,6 +73,39 @@ public class StubHub_HttpRequest {
 
 
     /*
+     * Validate that the given database/collection
+     * parameters are accessible.
+     */
+    public String validateDatabase(MongoClient mongoClient, DB db, String collectionName) {
+        //Attempt to connect to the mongo server
+        try {
+            mongoClient.getAddress();
+        } catch(Exception e) {
+            System.out.println("Connection to database failed. Process aborted.");
+            return "DB Conn Error";
+        }
+
+        //Confirm database exists
+        if (databaseDoesNotExist(mongoClient)) {
+            System.out.println("Database does not exist. Process aborted.");
+            return "DB DNE";
+        }
+
+        System.out.println("Connection to database successful!");
+        System.out.println();
+
+        //Confirm collection exists. If so, retrieve the collection
+        System.out.println("Connecting to collection.....");
+        if (collectionDoesNotExist(db, collectionName)) {
+            System.out.println("Collection does not exist. Process aborted.");
+            return "Collection DNE";
+        }
+
+        return "";
+    }
+
+
+    /*
      * Determine if the collection already exists.
      */
     private boolean databaseDoesNotExist(MongoClient mongo) {
@@ -110,7 +124,7 @@ public class StubHub_HttpRequest {
     /*
      * Determine if the collection already exists.
      */
-    private boolean collectionDoesNotExist(DB db, String collectionName) {
+    public boolean collectionDoesNotExist(DB db, String collectionName) {
         Set<String> names = db.getCollectionNames();
 
         for (final String name : names) {
@@ -126,7 +140,7 @@ public class StubHub_HttpRequest {
     /*
      * Check for duplicate values
      */
-    private boolean duplicateEntry(DBCollection collection, DBObject dbObj) {
+    public boolean duplicateEntry(DBCollection collection, DBObject dbObj) {
         DBCursor obj = collection.find(dbObj);
         return obj.count() > 0;
     }

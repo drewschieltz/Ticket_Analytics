@@ -22,6 +22,7 @@ import org.json.XML;
 //Other java dependencies
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+//import java.net.URLEncoder;
 import java.util.*;
 
 
@@ -46,6 +47,11 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
         //findListingsForEvent("9693644", params);
 
         //Map<String, String> params = new HashMap<String, String>();
+        //String encoded = URLEncoder.encode("music |concert", "UTF-8");
+        //params.put("categoryName",encoded);
+        //params.put("limit", "500");
+        //params.put("start", "500");
+        //params.put("status","Active");
         //params.put("name", "church");
         //params.put("state", "TX");
         //params.put("parking", "false");
@@ -145,7 +151,7 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
     /*
      * Find events based on certain criterion.
      */
-    private static void findEvents(Map<String, String> params) {
+    public void findEvents(Map<String, String> params) {
         Find_Events http = new Find_Events();
         http.getRequestData(params);
     }

@@ -1,13 +1,20 @@
 //Current package
 package StubHubAPI.SearchAPI;
 
-//Project package dependencies
+//Project package dependency
 import StubHubAPI.StubHub_HttpGetRequest;
+
+//MongoDB dependencies
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 
 //Java dependencies
 import java.util.Iterator;
 import java.util.Map;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Find_Events extends StubHub_HttpGetRequest {
 
@@ -27,6 +34,52 @@ public class Find_Events extends StubHub_HttpGetRequest {
             }
         }
 
-        sendGetRequest(sb.toString(), "Event_Search_Results");
+        sendGetRequest(sb.toString(), "Collected_Events");
+    }
+
+
+    /*
+    * Load data into database.
+    *
+    * Return codes:
+    *               OK - Success
+    *    DB Conn Error - Database connection error
+    *           DB DNE - Database does not exist
+    *   Collection DNE - Collection does not exist
+    *        Duplicate - Entry already exists
+    *          Unknown - Unknown Error
+    */
+    public String loadIntoDB(JSONObject json, String collectionName) {
+        try {
+            // Initialize variables
+            System.out.println("Connecting to database.....");
+            MongoClient mongoClient = new MongoClient( "localhost" , 27017);
+            DB db = mongoClient.getDB("StubHub");
+
+            String validation = validateDatabase(mongoClient, db, collectionName);
+            if (!validation.isEmpty()) {
+                return validation;
+            }
+
+            DBCollection collection = db.getCollection(collectionName);
+            System.out.println("Collection retrieval successful!");
+            System.out.println();
+
+            JSONArray array = json.getJSONArray("events");
+            for (int i=0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+
+                //Parse the json into a dbObject and enter into database
+                DBObject dbObj = (DBObject) com.mongodb.util.JSON.parse(obj.toString());
+                if (!duplicateEntry(collection, dbObj)) {
+                    collection.insert(dbObj);
+                }
+            }
+
+            return "OK";
+        } catch(Exception e) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            return "Unknown";
+        }
     }
 }

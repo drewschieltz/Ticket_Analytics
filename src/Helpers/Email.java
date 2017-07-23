@@ -1,11 +1,10 @@
 //Current package
-package Actions;
+package Helpers;
 
 //Package dependencies
 import Credentials.Email_Credentials;
 
 //Java dependencies
-import java.io.*;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;

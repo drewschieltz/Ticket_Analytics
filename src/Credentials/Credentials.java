@@ -8,7 +8,7 @@ public abstract class Credentials {
     /*
      * Return username
      */
-    public static String username() {
+    public String username() {
         return "";
     }
 
@@ -16,7 +16,7 @@ public abstract class Credentials {
     /*
      * Return password
      */
-    public static String password() {
+    public String password() {
         return "";
     }
 
@@ -24,7 +24,7 @@ public abstract class Credentials {
     /*
      * Return the application token.
      */
-    public static String applicationToken() {
+    public String applicationToken() {
         return "";
     }
 
@@ -32,7 +32,7 @@ public abstract class Credentials {
     /*
      * Return the consumer key.
      */
-    public static String consumerKey() {
+    public String consumerKey() {
         return "";
     }
 
@@ -40,7 +40,7 @@ public abstract class Credentials {
     /*
      * Return the consumer secret.
      */
-    public static String consumerSecret() {
+    public String consumerSecret() {
         return "";
     }
 }
