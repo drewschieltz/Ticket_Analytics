@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.net.URLEncoder;
 
 //Project package dependency
-import StubHubAPI.*;
+import StubHubAPI.SearchAPI.Find_Events;
 
 /**
  * Created by ASchieltz on 7/23/2017.
@@ -50,9 +50,16 @@ public class StubHub_Crawler {
         params.put("status", "Active");
         params.put("minAvailableTickets", "100");
         params.put("limit", "500");
-        params.put("start", "0");
 
-        StubHub_HttpGetRequest requester = new StubHub_HttpGetRequest();
-        requester.findEvents(params);
+        Find_Events findEvents = new Find_Events();
+        findEvents.getRequestData(params);
+
+        for (int i=500; i < findEvents.count; i += 500) {
+            params.put("start", String.valueOf(i));
+            findEvents.getRequestData(params);
+            params.remove("start");
+        }
+
+
     }
 }

@@ -149,15 +149,6 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
 
 
     /*
-     * Find events based on certain criterion.
-     */
-    public void findEvents(Map<String, String> params) {
-        Find_Events http = new Find_Events();
-        http.getRequestData(params);
-    }
-
-
-    /*
      * Find listings for a certain event.
      */
     private static void findListingsForEvent(String eventID, Map<String, String> params) {

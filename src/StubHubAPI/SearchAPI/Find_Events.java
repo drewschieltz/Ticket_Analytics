@@ -18,6 +18,10 @@ import org.json.JSONObject;
 
 public class Find_Events extends StubHub_HttpGetRequest {
 
+    //Number of events available.
+    public int count = 0;
+
+
     // HTTP GET request
     public void getRequestData(Map<String, String> params) {
         StringBuilder sb = new StringBuilder();
@@ -64,6 +68,8 @@ public class Find_Events extends StubHub_HttpGetRequest {
             DBCollection collection = db.getCollection(collectionName);
             System.out.println("Collection retrieval successful!");
             System.out.println();
+
+            count = (int) json.get("numFound");
 
             JSONArray array = json.getJSONArray("events");
             for (int i=0; i < array.length(); i++) {
