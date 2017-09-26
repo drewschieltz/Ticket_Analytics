@@ -38,7 +38,7 @@ public class Find_Events extends StubHub_HttpGetRequest {
             }
         }
 
-        sendGetRequest(sb.toString(), "Collected_Events");
+        sendGetRequest(sb.toString(), "Collected Events");
     }
 
 
@@ -69,7 +69,7 @@ public class Find_Events extends StubHub_HttpGetRequest {
             System.out.println("Collection retrieval successful!");
             System.out.println();
 
-            count = (int) json.get("numFound");
+            count = (int) json.getInt("numFound");
 
             JSONArray array = json.getJSONArray("events");
             for (int i=0; i < array.length(); i++) {

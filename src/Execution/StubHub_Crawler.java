@@ -54,6 +54,8 @@ public class StubHub_Crawler {
         Find_Events findEvents = new Find_Events();
         findEvents.getRequestData(params);
 
+        System.out.println(findEvents.count);
+
         for (int i=500; i < findEvents.count; i += 500) {
             params.put("start", String.valueOf(i));
             findEvents.getRequestData(params);
