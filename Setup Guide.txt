@@ -1,0 +1,36 @@
+Setup Guide
+=================
+
+	Required Software
+	-----------------
+		1. IntelliJ IDEA or similar IDE
+		2. Java JDK
+		3. MongoDB
+		4. Git
+		
+	Steps
+	-----
+		1. Install IntelliJ IDEA and import the project from GitHub
+		2. Set up Java inside of InteliJ IDEA
+			A. Under File, select Project Structure
+			B. Under the Project JDK section, click the "New" button and select "JDK" from the drop down
+			C. Select the path to the JDK from the local system (C:\Program Files\Java\jdk1.8.0_144)
+		3. Import the required JARs into the project's external library
+			A. Under File, select Project Structure
+			B. Select Modules from the side toolbar
+			C. Click the "+" button from the right side toolbar and select "JARs or Directories..." from the drop down
+			D. Select all the JARs needed to import into the project from the local system
+			E. To import the JARs, click the "Apply" button
+		4. Set up Git inside of IntelliJ IDEA
+			A. Under File, select Settings
+			B. Under Version Control from the side toolbar, select Git
+			C. Update the "Path to Git executable" field to the local git executatble (C:\Program File\Git\bin\git.exe)
+			D. Test the path to confirm the connection to the executable is established
+		5. Set up the Mongo Explorer plugin inside of IntelliJ IDEA
+			A. Under File, select Settings
+			B. Select Plugins from the side toolbar
+			C. Click the "Browse Repositories..." button
+			D. Search for Mongo Explorer and click "Download"
+			E. From the side toolbar, select Mongo Servers
+			F. Update the "Path to Mongo Shell" field to the local mongo executable (C:\Program Files\MongoDB\Server\3.4\bin\mongo.exe)
+			G. Test the path to confirm the connection to the executable is established
