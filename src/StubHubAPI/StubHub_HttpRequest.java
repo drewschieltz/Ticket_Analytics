@@ -18,6 +18,8 @@ import java.util.Set;
 public class StubHub_HttpRequest {
 
     public static Token_Credentials token_credentials = new Token_Credentials();
+    public static MongoClient mongoClient = new MongoClient( "localhost" , 27017);
+    public static DB db = mongoClient.getDB("StubHub");
 
     /*******************************************************
      * Database Methods
@@ -38,8 +40,6 @@ public class StubHub_HttpRequest {
         try {
             // Initialize variables
             System.out.println("Connecting to database.....");
-            MongoClient mongoClient = new MongoClient( "localhost" , 27017);
-            DB db = mongoClient.getDB("StubHub");
 
             String validation = validateDatabase(mongoClient, db, collectionName);
             if (!validation.isEmpty()) {
@@ -106,7 +106,7 @@ public class StubHub_HttpRequest {
 
 
     /*
-     * Determine if the collection already exists.
+     * Determine if the database already exists.
      */
     private boolean databaseDoesNotExist(MongoClient mongo) {
         List<String> names = mongo.getDatabaseNames();
@@ -138,7 +138,7 @@ public class StubHub_HttpRequest {
 
 
     /*
-     * Check for duplicate values
+     * Check for duplicate values.
      */
     public boolean duplicateEntry(DBCollection collection, DBObject dbObj) {
         DBCursor obj = collection.find(dbObj);

@@ -55,12 +55,10 @@ public class Find_Events extends StubHub_HttpGetRequest {
     */
     public String loadIntoDB(JSONObject json, String collectionName) {
         try {
-            // Initialize variables
             System.out.println("Connecting to database.....");
-            MongoClient mongoClient = new MongoClient( "localhost" , 27017);
-            DB db = mongoClient.getDB("StubHub");
 
             String validation = validateDatabase(mongoClient, db, collectionName);
+
             if (!validation.isEmpty()) {
                 return validation;
             }
