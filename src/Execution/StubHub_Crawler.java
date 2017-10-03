@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 //Project package dependency
 import StubHubAPI.SearchAPI.Find_Events;
 import StubHubAPI.SearchAPI.Find_Listings_For_Event;
+import Helpers.Email;
 import com.mongodb.*;
 
 
@@ -22,31 +23,48 @@ public class StubHub_Crawler {
     public static MongoClient mongoClient = new MongoClient( "localhost" , 27017);
     public static DB db = mongoClient.getDB("StubHub");
 
+
+    /*
+     * Shutdown hook.
+     */
+    static class ShutdownHook extends Thread {
+
+        public void run() {
+            Email email = new Email();
+            email.sendEmails("Program has terminated. Please restart.");
+        }
+    }
+
+
     /*
      * Execute the algorithm.
      */
-    public static void main(String[] args) throws Exception {
-        long start1 = System.nanoTime();
-        loadEventsTable();
-        long end1 = System.nanoTime();
+    public static void main(String[] args) {
+        try {
+            long start1 = System.nanoTime();
+            loadEventsTable();
+            long end1 = System.nanoTime();
 
-        long start2 = System.nanoTime();
-        loadListingsTable();
-        long end2 = System.nanoTime();
+            long start2 = System.nanoTime();
+            loadListingsTable();
+            long end2 = System.nanoTime();
 
-        long duration1 = (end1-start1)/1000000000;
-        long duration2 = (end2-start2)/1000000000;
+            long duration1 = (end1-start1)/1000000000;
+            long duration2 = (end2-start2)/1000000000;
 
-        long minutes1 = duration1/60;
-        long seconds1 = duration1 - (minutes1*60);
+            long minutes1 = duration1/60;
+            long seconds1 = duration1 - (minutes1*60);
 
-        long minutes2 = duration2/60;
-        long seconds2 = duration2 - (minutes2*60);
+            long minutes2 = duration2/60;
+            long seconds2 = duration2 - (minutes2*60);
 
-        System.out.println("Loading Events took: " + minutes1 + " minutes, " + seconds1 + " seconds");
-        System.out.println("Loading Listings took: " + minutes2 + " minutes, " + seconds2 + " seconds");
-        
-        //Timer timer = new Timer();
+            System.out.println("Loading Events took: " + minutes1 + " minutes, " + seconds1 + " seconds");
+            System.out.println("Loading Listings took: " + minutes2 + " minutes, " + seconds2 + " seconds");
+
+            Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+        } catch (Exception e) {
+            Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+        }
     }
 
 
@@ -102,11 +120,14 @@ public class StubHub_Crawler {
         DBCollection collection = db.getCollection("Collected Events");
         DBCursor cursor = collection.find();
 
-        while (cursor.hasNext()) {
+        int index = 1;
+        while (cursor.hasNext() & index < 10) {
+            System.out.println("Loading Event " + index + " of " + collection.count());
             DBObject obj = cursor.next();
             String id = obj.get("id").toString();
 
             findListings.getRequestData(id, params);
+            index++;
         }
     }
 }

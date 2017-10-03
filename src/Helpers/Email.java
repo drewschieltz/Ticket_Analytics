@@ -16,14 +16,14 @@ public class Email {
 
     //Test code
     public static void main(String [] args) {
-        sendEmails();
+        sendEmails("");
     }
 
 
     /*
      * Send emails.
      */
-    public static void sendEmails() {
+    public static void sendEmails(String text) {
         Session session = Session.getInstance(properties(),
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -32,8 +32,8 @@ public class Email {
                 });
 
         try {
-            if (formatMessage(session) != null) {
-                Transport.send(formatMessage(session));
+            if (formatMessage(session, text) != null) {
+                Transport.send(formatMessage(session, text));
                 System.out.println();
                 System.out.println("Email(s) sent successfully!");
             }
@@ -92,7 +92,7 @@ public class Email {
     /*
      * Format the email subject/body.
      */
-    private static Message formatMessage(Session session) {
+    private static Message formatMessage(Session session, String text) {
         Message message = new MimeMessage(session);
 
         try {
@@ -100,8 +100,13 @@ public class Email {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(getAddressList()));
 
             message.setSubject("Test Subject");
-            message.setText("Recipient,"
-                    + "\n\nThis is a test of the automatic email system. Please disregard.");
+
+            if (text.isEmpty()) {
+                message.setText("Recipient,"
+                        + "\n\nThis is a test of the automatic email system. Please disregard.");
+            } else {
+                message.setText(text);
+            }
 
             return message;
         } catch (MessagingException e) {
