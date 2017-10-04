@@ -38,7 +38,7 @@ public class Find_Events extends StubHub_HttpGetRequest {
             }
         }
 
-        sendGetRequest(sb.toString(), "Collected Events");
+        sendGetRequest(sb.toString(), "Collected_Events");
     }
 
 

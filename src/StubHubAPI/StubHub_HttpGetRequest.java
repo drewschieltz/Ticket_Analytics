@@ -1,12 +1,6 @@
 //Current Package
 package StubHubAPI;
 
-//Project package dependencies
-import StubHubAPI.EventsAPI.*;
-import StubHubAPI.ListingsAPI.*;
-import StubHubAPI.SearchAPI.*;
-import StubHubAPI.VenuesAPI.*;
-
 //Apache dependencies
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -22,40 +16,12 @@ import org.json.XML;
 //Other java dependencies
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-//import java.net.URLEncoder;
-import java.util.*;
-
 
 public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
 
     //Run code - For testing only
     public static void main(String[] args) throws Exception {
-        /*LISTINGS V2 API*/
-        //getListingInfo("1261109138");
 
-        /*VENUES V2 API*/
-        //getVenueInfo("180239");
-
-        /*EVENTS V2 API*/
-        //getEventInfo("9892364");
-
-        /*SEARCH V2 API*/
-
-        //Map<String, String> params = new HashMap<String, String>() {};
-        //params.put("quantity", "8");
-        //params.put("pricemin", "150");
-        //findListingsForEvent("9693644", params);
-
-        //Map<String, String> params = new HashMap<String, String>();
-        //String encoded = URLEncoder.encode("music |concert", "UTF-8");
-        //params.put("categoryName",encoded);
-        //params.put("limit", "500");
-        //params.put("start", "500");
-        //params.put("status","Active");
-        //params.put("name", "church");
-        //params.put("state", "TX");
-        //params.put("parking", "false");
-        //findEvents(params);
     }
 
 
@@ -132,45 +98,5 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
             System.out.println("Error retrieving data. Process aborted.");
             e.printStackTrace();
         }
-    }
-
-
-    /*******************************************************
-     * Class Getters
-     ******************************************************/
-
-    /*
-     * Get event information.
-     */
-    private static void getEventInfo(String eventID) {
-        Event_Info http = new Event_Info();
-        http.getRequestData(eventID);
-    }
-
-
-    /*
-     * Find listings for a certain event.
-     */
-    private static void findListingsForEvent(String eventID, Map<String, String> params) {
-        Find_Listings_For_Event http = new Find_Listings_For_Event();
-        http.getRequestData(eventID, params);
-    }
-
-
-    /*
-     * Get listing information.
-     */
-    private static void getListingInfo(String eventID) {
-        Listing_Info http = new Listing_Info();
-        http.getRequestData(eventID);
-    }
-
-
-    /*
-     * Get venue information.
-     */
-    private static void getVenueInfo(String venueID) {
-        Venue_Info http = new Venue_Info();
-        http.getRequestData(venueID);
     }
 }

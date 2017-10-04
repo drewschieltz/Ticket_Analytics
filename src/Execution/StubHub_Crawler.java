@@ -3,7 +3,6 @@ package Execution;
 
 //Java dependency
 import java.io.UnsupportedEncodingException;
-//import java.util.Timer;
 import java.util.Map;
 import java.util.HashMap;
 import java.net.URLEncoder;
@@ -13,6 +12,8 @@ import StubHubAPI.SearchAPI.Find_Events;
 import StubHubAPI.SearchAPI.Find_Listings_For_Event;
 import Helpers.Email;
 import com.mongodb.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -42,15 +43,20 @@ public class StubHub_Crawler {
     public static void main(String[] args) {
         try {
             long start1 = System.nanoTime();
-            loadEventsTable();
+            //loadEventsTable();
             long end1 = System.nanoTime();
 
             long start2 = System.nanoTime();
-            loadListingsTable();
+            //loadListingsTable();
             long end2 = System.nanoTime();
+
+            long start3 = System.nanoTime();
+            filterListings();
+            long end3 = System.nanoTime();
 
             long duration1 = (end1-start1)/1000000000;
             long duration2 = (end2-start2)/1000000000;
+            long duration3 = (end3-start3)/1000000000;
 
             long minutes1 = duration1/60;
             long seconds1 = duration1 - (minutes1*60);
@@ -58,8 +64,12 @@ public class StubHub_Crawler {
             long minutes2 = duration2/60;
             long seconds2 = duration2 - (minutes2*60);
 
+            long minutes3 = duration3/60;
+            long seconds3 = duration3 - (minutes3*60);
+
             System.out.println("Loading Events took: " + minutes1 + " minutes, " + seconds1 + " seconds");
             System.out.println("Loading Listings took: " + minutes2 + " minutes, " + seconds2 + " seconds");
+            System.out.println("Filtering Listings took: " + minutes3 + " minutes, " + seconds3 + " seconds");
 
             Runtime.getRuntime().addShutdownHook(new ShutdownHook());
         } catch (Exception e) {
@@ -117,17 +127,46 @@ public class StubHub_Crawler {
         params.put("quantity", "2");
         params.put("deliverytypelist", "2,5");
 
-        DBCollection collection = db.getCollection("Collected Events");
+        DBCollection collection = db.getCollection("Collected_Events");
         DBCursor cursor = collection.find();
 
         int index = 1;
-        while (cursor.hasNext() & index < 10) {
+        while (cursor.hasNext()) {
             System.out.println("Loading Event " + index + " of " + collection.count());
             DBObject obj = cursor.next();
             String id = obj.get("id").toString();
 
             findListings.getRequestData(id, params);
             index++;
+        }
+    }
+
+    /*
+     / Filter listings to find profitable ones.
+     */
+    private static void filterListings() throws JSONException {
+        DBCollection collection = db.getCollection("Collected_Listings");
+        DBCursor cursor = collection.find();
+
+        for (int i = 1; cursor.hasNext(); i++) {
+            System.out.println("Checking Listing " + i + " of " + collection.count());
+            DBObject obj = cursor.next();
+
+            if (obj.keySet().contains("faceValue")) {
+                double faceValue;
+                double currentPrice;
+
+                JSONObject fvObj = new JSONObject(obj.get("faceValue").toString());
+                faceValue = Double.parseDouble(fvObj.get("amount").toString());
+
+                JSONObject cpObj = new JSONObject(obj.get("currentPrice").toString());
+                currentPrice = Double.parseDouble(cpObj.get("amount").toString());
+
+                if (faceValue < 400 & faceValue > currentPrice + 50) {
+                    JSONObject json = new JSONObject(obj);
+                    //Load json into Approved_Listings
+                }
+            }
         }
     }
 }

@@ -34,21 +34,21 @@ public class Find_Listings_For_Event extends StubHub_HttpGetRequest {
             }
         }
 
-        sendGetRequest(sb.toString(), "Collected Listings");
+        sendGetRequest(sb.toString(), "Collected_Listings");
     }
 
 
     /*
-* Load data into database.
-*
-* Return codes:
-*               OK - Success
-*    DB Conn Error - Database connection error
-*           DB DNE - Database does not exist
-*   Collection DNE - Collection does not exist
-*        Duplicate - Entry already exists
-*          Unknown - Unknown Error
-*/
+     * Load data into database.
+     *
+     * Return codes:
+     *               OK - Success
+     *    DB Conn Error - Database connection error
+     *           DB DNE - Database does not exist
+     *   Collection DNE - Collection does not exist
+     *        Duplicate - Entry already exists
+     *          Unknown - Unknown Error
+     */
     public String loadIntoDB(JSONObject json, String collectionName) {
         try {
             System.out.println("Connecting to database.....");
