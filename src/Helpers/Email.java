@@ -12,7 +12,7 @@ import javax.mail.internet.*;
 
 public class Email {
 
-    public static Email_Credentials credentials = new Email_Credentials();
+    private static Email_Credentials credentials = new Email_Credentials();
 
     //Test code
     public static void main(String [] args) {

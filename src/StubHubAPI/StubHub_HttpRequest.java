@@ -2,7 +2,7 @@
 package StubHubAPI;
 
 //Package dependencies
-import Credentials.Token_Credentials;
+import Credentials.StubHub_Token_Credentials;
 
 //MongoDB dependencies
 import com.mongodb.*;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class StubHub_HttpRequest {
 
-    public static Token_Credentials token_credentials = new Token_Credentials();
+    public static StubHub_Token_Credentials token_credentials = new StubHub_Token_Credentials();
     public static MongoClient mongoClient = new MongoClient( "localhost" , 27017);
     public static DB db = mongoClient.getDB("StubHub");
 

@@ -64,7 +64,7 @@ public class StubHub_HttpPostRequest extends StubHub_HttpRequest {
                         new InputStreamReader(response.getEntity().getContent()));
 
                 StringBuilder result = new StringBuilder();
-                String line = "";
+                String line;
                 while ((line = rd.readLine()) != null) {
                     result.append(line);
                 }

@@ -20,9 +20,7 @@ import java.io.InputStreamReader;
 public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
 
     //Run code - For testing only
-    public static void main(String[] args) throws Exception {
-
-    }
+    public static void main(String[] args) throws Exception {}
 
 
     /*******************************************************

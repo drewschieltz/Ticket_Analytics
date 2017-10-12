@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import StubHubAPI.SearchAPI.Find_Events;
 import StubHubAPI.SearchAPI.Find_Listings_For_Event;
 import Helpers.Email;
+import StubHubAPI.StubHub_HttpRequest;
 import com.mongodb.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,8 +22,8 @@ import org.json.JSONObject;
  */
 public class StubHub_Crawler {
 
-    public static MongoClient mongoClient = new MongoClient( "localhost" , 27017);
-    public static DB db = mongoClient.getDB("StubHub");
+    private static MongoClient mongoClient = new MongoClient( "localhost" , 27017);
+    private static DB db = mongoClient.getDB("StubHub");
 
 
     /*
@@ -42,34 +43,15 @@ public class StubHub_Crawler {
      */
     public static void main(String[] args) {
         try {
-            long start1 = System.nanoTime();
-            //loadEventsTable();
-            long end1 = System.nanoTime();
+            long[] duration1 = loadEventsTable();
+            long[] duration2 = loadListingsTable();
+            long[] duration3 = filterListings();
 
-            long start2 = System.nanoTime();
-            //loadListingsTable();
-            long end2 = System.nanoTime();
+            System.out.println("Loading Events took: " + duration1[0] + " minutes, " + duration1[1] + " seconds");
+            System.out.println("Loading Listings took: " + duration2[0] + " minutes, " + duration2[1] + " seconds");
+            System.out.println("Filtering Listings took: " + duration3[0] + " minutes, " + duration3[1]+ " seconds");
 
-            long start3 = System.nanoTime();
-            filterListings();
-            long end3 = System.nanoTime();
-
-            long duration1 = (end1-start1)/1000000000;
-            long duration2 = (end2-start2)/1000000000;
-            long duration3 = (end3-start3)/1000000000;
-
-            long minutes1 = duration1/60;
-            long seconds1 = duration1 - (minutes1*60);
-
-            long minutes2 = duration2/60;
-            long seconds2 = duration2 - (minutes2*60);
-
-            long minutes3 = duration3/60;
-            long seconds3 = duration3 - (minutes3*60);
-
-            System.out.println("Loading Events took: " + minutes1 + " minutes, " + seconds1 + " seconds");
-            System.out.println("Loading Listings took: " + minutes2 + " minutes, " + seconds2 + " seconds");
-            System.out.println("Filtering Listings took: " + minutes3 + " minutes, " + seconds3 + " seconds");
+            purgeDBs();
 
             Runtime.getRuntime().addShutdownHook(new ShutdownHook());
         } catch (Exception e) {
@@ -78,10 +60,26 @@ public class StubHub_Crawler {
     }
 
 
+    public static void purgeDBs() {
+        BasicDBObject basicDBObj = new BasicDBObject();
+
+        DBCollection dbColl = db.getCollection("Collected_Events");
+        dbColl.remove(basicDBObj);
+
+        dbColl = db.getCollection("Collected_Listings");
+        dbColl.remove(basicDBObj);
+
+        //dbColl = db.getCollection("Approved_Events");
+        //dbColl.remove(basicDBObj);
+    }
+
+
     /*
      * Load the "Collected Events" table.
      */
-    private static void loadEventsTable() {
+    private static long[] loadEventsTable() {
+        long start = System.nanoTime();
+
         Map<String, String> params = new HashMap<String, String>();
         String geoName = null;
         String catName = "music";
@@ -113,12 +111,18 @@ public class StubHub_Crawler {
             findEvents.getRequestData(params);
             params.remove("start");
         }
+
+        long end = System.nanoTime();
+        return timeTracker(start, end);
     }
+
 
     /*
      * Load the "Collected Listings" table.
      */
-    private static void loadListingsTable() {
+    private static long[] loadListingsTable() {
+        long start = System.nanoTime();
+
         Find_Listings_For_Event findListings = new Find_Listings_For_Event();
         Map<String, String> params = new HashMap<String, String>();
 
@@ -131,7 +135,7 @@ public class StubHub_Crawler {
         DBCursor cursor = collection.find();
 
         int index = 1;
-        while (cursor.hasNext()) {
+        while (cursor.hasNext() & index < 1501) {
             System.out.println("Loading Event " + index + " of " + collection.count());
             DBObject obj = cursor.next();
             String id = obj.get("id").toString();
@@ -139,12 +143,17 @@ public class StubHub_Crawler {
             findListings.getRequestData(id, params);
             index++;
         }
+
+        long end = System.nanoTime();
+        return timeTracker(start, end);
     }
 
     /*
      / Filter listings to find profitable ones.
      */
-    private static void filterListings() throws JSONException {
+    private static long[] filterListings() throws JSONException {
+        long start = System.nanoTime();
+
         DBCollection collection = db.getCollection("Collected_Listings");
         DBCursor cursor = collection.find();
 
@@ -164,9 +173,29 @@ public class StubHub_Crawler {
 
                 if (faceValue < 400 & faceValue > currentPrice + 50) {
                     JSONObject json = new JSONObject(obj);
-                    //Load json into Approved_Listings
+
+                    StubHub_HttpRequest httpRequest = new StubHub_HttpRequest();
+                    httpRequest.loadIntoDB(json, "Approved_Listings");
                 }
             }
         }
+
+        long end = System.nanoTime();
+        return timeTracker(start, end);
+    }
+
+    /*
+     * Time tracker.
+     */
+    private static long[] timeTracker(long start, long end) {
+        long[] times = new long[2];
+
+        long duration = (end-start)/1000000000;
+        long minutes = duration/60;
+        long seconds = duration - (minutes*60);
+
+        times[0] = minutes;
+        times[1] = seconds;
+        return times;
     }
 }
