@@ -1,8 +1,7 @@
+//Current package
 package Credentials;
 
-/**
- * Created by ASchieltz on 7/16/2017.
- */
+
 public abstract class Credentials {
 
     /*

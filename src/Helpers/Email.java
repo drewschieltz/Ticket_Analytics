@@ -1,10 +1,8 @@
 //Current package
 package Helpers;
 
-//Package dependencies
+//Dependencies
 import Credentials.Email_Credentials;
-
-//Java dependencies
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -15,15 +13,13 @@ public class Email {
     private static Email_Credentials credentials = new Email_Credentials();
 
     //Test code
-    public static void main(String [] args) {
-        sendEmails("");
-    }
+    public static void main(String [] args) {}
 
 
     /*
      * Send emails.
      */
-    public static void sendEmails(String text) {
+    public void sendEmails(String text) {
         Session session = Session.getInstance(properties(),
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -32,11 +28,9 @@ public class Email {
                 });
 
         try {
-            if (formatMessage(session, text) != null) {
-                Transport.send(formatMessage(session, text));
-                System.out.println();
-                System.out.println("Email(s) sent successfully!");
-            }
+            Transport.send(formatMessage(session, text));
+            System.out.println();
+            System.out.println("Email(s) sent successfully!");
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
@@ -113,6 +107,6 @@ public class Email {
             System.out.println("Message failed to generate!");
         }
 
-        return null;
+        return message;
     }
 }

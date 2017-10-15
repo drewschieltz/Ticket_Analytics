@@ -1,27 +1,25 @@
 //Current package
 package Execution;
 
-//Java dependency
+//Dependencies
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.HashMap;
 import java.net.URLEncoder;
-
-//Project package dependency
-import StubHubAPI.SearchAPI.Find_Events;
-import StubHubAPI.SearchAPI.Find_Listings_For_Event;
+import StubHubAPI.SearchAPI.SH_Find_Events;
+import StubHubAPI.SearchAPI.SH_Find_Listings;
 import Helpers.Email;
-import StubHubAPI.StubHub_HttpRequest;
+import StubHubAPI.SH_HttpRequest;
 import com.mongodb.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-/**
- * Created by ASchieltz on 7/23/2017.
- */
 public class StubHub_Crawler {
 
+    /*
+     * Fields.
+     */
     private static MongoClient mongoClient = new MongoClient( "localhost" , 27017);
     private static DB db = mongoClient.getDB("StubHub");
 
@@ -42,6 +40,9 @@ public class StubHub_Crawler {
      * Execute the algorithm.
      */
     public static void main(String[] args) {
+        //purgeDBs();
+        //System.exit(1);
+
         try {
             long[] duration1 = loadEventsTable();
             long[] duration2 = loadListingsTable();
@@ -52,7 +53,6 @@ public class StubHub_Crawler {
             System.out.println("Filtering Listings took: " + duration3[0] + " minutes, " + duration3[1]+ " seconds");
 
             purgeDBs();
-
             Runtime.getRuntime().addShutdownHook(new ShutdownHook());
         } catch (Exception e) {
             Runtime.getRuntime().addShutdownHook(new ShutdownHook());
@@ -60,7 +60,10 @@ public class StubHub_Crawler {
     }
 
 
-    public static void purgeDBs() {
+    /*
+     * Purge the databases.
+     */
+    private static void purgeDBs() {
         BasicDBObject basicDBObj = new BasicDBObject();
 
         DBCollection dbColl = db.getCollection("Collected_Events");
@@ -69,8 +72,8 @@ public class StubHub_Crawler {
         dbColl = db.getCollection("Collected_Listings");
         dbColl.remove(basicDBObj);
 
-        //dbColl = db.getCollection("Approved_Events");
-        //dbColl.remove(basicDBObj);
+        dbColl = db.getCollection("Approved_Listings");
+        dbColl.remove(basicDBObj);
     }
 
 
@@ -101,7 +104,7 @@ public class StubHub_Crawler {
         params.put("minAvailableTickets", "100");
         params.put("limit", "500");
 
-        Find_Events findEvents = new Find_Events();
+        SH_Find_Events findEvents = new SH_Find_Events();
         findEvents.getRequestData(params);
 
         System.out.println("Total Events: " + findEvents.count);
@@ -123,7 +126,7 @@ public class StubHub_Crawler {
     private static long[] loadListingsTable() {
         long start = System.nanoTime();
 
-        Find_Listings_For_Event findListings = new Find_Listings_For_Event();
+        SH_Find_Listings findListings = new SH_Find_Listings();
         Map<String, String> params = new HashMap<String, String>();
 
         //Load parameters
@@ -147,6 +150,7 @@ public class StubHub_Crawler {
         long end = System.nanoTime();
         return timeTracker(start, end);
     }
+
 
     /*
      / Filter listings to find profitable ones.
@@ -174,7 +178,7 @@ public class StubHub_Crawler {
                 if (faceValue < 400 & faceValue > currentPrice + 50) {
                     JSONObject json = new JSONObject(obj);
 
-                    StubHub_HttpRequest httpRequest = new StubHub_HttpRequest();
+                    SH_HttpRequest httpRequest = new SH_HttpRequest();
                     httpRequest.loadIntoDB(json, "Approved_Listings");
                 }
             }
@@ -183,6 +187,7 @@ public class StubHub_Crawler {
         long end = System.nanoTime();
         return timeTracker(start, end);
     }
+
 
     /*
      * Time tracker.
@@ -199,3 +204,4 @@ public class StubHub_Crawler {
         return times;
     }
 }
+

@@ -1,27 +1,26 @@
 //Current package
 package StubHubAPI.SearchAPI;
 
-//Project package dependencies
-import StubHubAPI.StubHub_HttpGetRequest;
-
-//Mongo dependencies
+//Dependencies
+import StubHubAPI.SH_Get;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-
-//Java dependencies
 import java.util.Iterator;
 import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class Find_Listings_For_Event extends StubHub_HttpGetRequest {
+public class SH_Find_Events extends SH_Get {
+
+    //Number of events available.
+    public int count = 0;
+
 
     // HTTP GET request
-    public void getRequestData(String eventID, Map<String, String> params) {
+    public void getRequestData(Map<String, String> params) {
         StringBuilder sb = new StringBuilder();
-        sb.append("https://api.stubhub.com/search/inventory/v2?eventid=");
-        sb.append(eventID);
+        sb.append("https://api.stubhub.com/search/catalog/events/v3?");
 
         if (params != null) {
             Iterator iter = params.entrySet().iterator();
@@ -34,36 +33,38 @@ public class Find_Listings_For_Event extends StubHub_HttpGetRequest {
             }
         }
 
-        sendGetRequest(sb.toString(), "Collected_Listings");
+        sendGetRequest(sb.toString(), "Collected_Events");
     }
 
 
     /*
-     * Load data into database.
-     *
-     * Return codes:
-     *               OK - Success
-     *    DB Conn Error - Database connection error
-     *           DB DNE - Database does not exist
-     *   Collection DNE - Collection does not exist
-     *        Duplicate - Entry already exists
-     *          Unknown - Unknown Error
-     */
+    * Load data into database.
+    *
+    * Return codes:
+    *               OK - Success
+    *    DB Conn Error - Database connection error
+    *           DB DNE - Database does not exist
+    *   Collection DNE - Collection does not exist
+    *        Duplicate - Entry already exists
+    *          Unknown - Unknown Error
+    */
     public String loadIntoDB(JSONObject json, String collectionName) {
         try {
             System.out.println("Connecting to database.....");
 
-            String validation = validateDatabase(mongoClient, db, collectionName);
+            String validation = validateDatabase(mongoClient, db(), collectionName);
 
             if (!validation.isEmpty()) {
                 return validation;
             }
 
-            DBCollection collection = db.getCollection(collectionName);
+            DBCollection collection = db().getCollection(collectionName);
             System.out.println("Collection retrieval successful!");
             System.out.println();
 
-            JSONArray array = json.getJSONArray("listing");
+            count = (int) json.getInt("numFound");
+
+            JSONArray array = json.getJSONArray("events");
             for (int i=0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
 

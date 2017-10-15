@@ -1,11 +1,11 @@
 //Current package
 package StubHubAPI.EventsAPI;
 
-//Project package dependencies
-import StubHubAPI.StubHub_HttpGetRequest;
+//Dependencies
+import StubHubAPI.SH_Get;
 
 
-public class Event_Info extends StubHub_HttpGetRequest {
+public class SH_Event_Info extends SH_Get {
 
     // HTTP GET request
     public void getRequestData(String eventID) {

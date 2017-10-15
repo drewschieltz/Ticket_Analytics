@@ -1,23 +1,20 @@
-//Current Package
+//Current package
 package StubHubAPI;
 
-//Apache dependencies
+//Dependencies
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
-
-//XML/JSON dependencies
 import org.json.JSONObject;
 import org.json.XML;
-
-//Other java dependencies
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
+
+public class SH_Get extends SH_HttpRequest {
 
     //Run code - For testing only
     public static void main(String[] args) throws Exception {}
@@ -30,7 +27,7 @@ public class StubHub_HttpGetRequest extends StubHub_HttpRequest {
     /*
      * Send HTTP Get request.
      */
-    public void sendGetRequest(String path, String collectionName) {
+    protected void sendGetRequest(String path, String collectionName) {
 
         System.out.println("Sending Http GET request......");
 
