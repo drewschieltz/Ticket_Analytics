@@ -40,7 +40,7 @@ public class StubHub_Crawler {
      * Execute the algorithm.
      */
     public static void main(String[] args) {
-        //purgeDBs();
+        purgeDBs();
         //System.exit(1);
 
         try {
@@ -48,11 +48,11 @@ public class StubHub_Crawler {
             long[] duration2 = loadListingsTable();
             long[] duration3 = filterListings();
 
-            System.out.println("Loading Events took: " + duration1[0] + " minutes, " + duration1[1] + " seconds");
-            System.out.println("Loading Listings took: " + duration2[0] + " minutes, " + duration2[1] + " seconds");
-            System.out.println("Filtering Listings took: " + duration3[0] + " minutes, " + duration3[1]+ " seconds");
+            System.out.println("Loading " + duration1[0] + " Events took: " + duration1[1] + " minutes, " + duration1[2] + " seconds");
+            System.out.println("Loading " + duration2[0] + " Listings took: " + duration2[1] + " minutes, " + duration2[2] + " seconds");
+            System.out.println("Filtering Listings took: " + duration3[1] + " minutes, " + duration3[2]+ " seconds");
 
-            purgeDBs();
+            //purgeDBs();
             Runtime.getRuntime().addShutdownHook(new ShutdownHook());
         } catch (Exception e) {
             Runtime.getRuntime().addShutdownHook(new ShutdownHook());
@@ -107,8 +107,6 @@ public class StubHub_Crawler {
         SH_Find_Events findEvents = new SH_Find_Events();
         findEvents.getRequestData(params);
 
-        System.out.println("Total Events: " + findEvents.count);
-
         for (int i=500; i < findEvents.count; i += 500) {
             params.put("start", String.valueOf(i));
             findEvents.getRequestData(params);
@@ -116,7 +114,7 @@ public class StubHub_Crawler {
         }
 
         long end = System.nanoTime();
-        return timeTracker(start, end);
+        return timeTracker(findEvents.count, start, end);
     }
 
 
@@ -138,7 +136,7 @@ public class StubHub_Crawler {
         DBCursor cursor = collection.find();
 
         int index = 1;
-        while (cursor.hasNext() & index < 1501) {
+        while (cursor.hasNext()) {
             System.out.println("Loading Event " + index + " of " + collection.count());
             DBObject obj = cursor.next();
             String id = obj.get("id").toString();
@@ -148,7 +146,8 @@ public class StubHub_Crawler {
         }
 
         long end = System.nanoTime();
-        return timeTracker(start, end);
+        long count = db.getCollection("Collected_Listings").count();
+        return timeTracker(count, start, end);
     }
 
 
@@ -185,22 +184,23 @@ public class StubHub_Crawler {
         }
 
         long end = System.nanoTime();
-        return timeTracker(start, end);
+        return timeTracker(0, start, end);
     }
 
 
     /*
      * Time tracker.
      */
-    private static long[] timeTracker(long start, long end) {
-        long[] times = new long[2];
+    private static long[] timeTracker(long count, long start, long end) {
+        long[] times = new long[3];
 
         long duration = (end-start)/1000000000;
         long minutes = duration/60;
         long seconds = duration - (minutes*60);
 
-        times[0] = minutes;
-        times[1] = seconds;
+        times[0] = count;
+        times[1] = minutes;
+        times[2] = seconds;
         return times;
     }
 }

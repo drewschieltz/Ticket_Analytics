@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class SH_Find_Events extends SH_Get {
 
-    //Number of events available.
+    //Number of events returned.
     public int count = 0;
 
 
@@ -62,7 +62,7 @@ public class SH_Find_Events extends SH_Get {
             System.out.println("Collection retrieval successful!");
             System.out.println();
 
-            count = (int) json.getInt("numFound");
+            count = json.getInt("numFound");
 
             JSONArray array = json.getJSONArray("events");
             for (int i=0; i < array.length(); i++) {
