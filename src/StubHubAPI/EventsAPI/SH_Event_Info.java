@@ -2,10 +2,10 @@
 package StubHubAPI.EventsAPI;
 
 //Dependencies
-import StubHubAPI.SH_Get;
+import StubHubAPI.SH_HttpRequest;
 
 
-public class SH_Event_Info extends SH_Get {
+public class SH_Event_Info extends SH_HttpRequest {
 
     // HTTP GET request
     public void getRequestData(String eventID) {

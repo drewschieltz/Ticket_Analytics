@@ -1,5 +1,5 @@
 //Current package
-package StubHubAPI;
+package TicketmasterAPI;
 
 //Dependencies
 import Credentials.*;
@@ -8,14 +8,14 @@ import com.mongodb.*;
 import java.util.List;
 
 
-public class SH_HttpRequest extends HttpRequest{
+public class TM_HttpRequest extends HttpRequest{
 
     /*
      * Token credentials.
      */
     @Override
     protected Credentials tokenCredentials() {
-        return new StubHub_Token_Credentials();
+        return new Ticketmaster_Token_Credentials();
     }
 
 
@@ -24,7 +24,7 @@ public class SH_HttpRequest extends HttpRequest{
      */
     @Override
     protected DB db() {
-        return mongoClient.getDB("StubHub");
+        return mongoClient.getDB("Ticketmaster");
     }
 
 
@@ -32,11 +32,11 @@ public class SH_HttpRequest extends HttpRequest{
      * Determine if the database already exists.
      */
     @Override
-    protected boolean databaseDoesNotExist(MongoClient mongo) {
+    public boolean databaseDoesNotExist(MongoClient mongo) {
         List<String> names = mongo.getDatabaseNames();
 
         for (final String name : names) {
-            if (name.equals("StubHub")) {
+            if (name.equals("Ticketmaster")) {
                 return false;
             }
         }

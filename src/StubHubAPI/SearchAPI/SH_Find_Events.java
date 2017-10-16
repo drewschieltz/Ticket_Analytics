@@ -2,7 +2,7 @@
 package StubHubAPI.SearchAPI;
 
 //Dependencies
-import StubHubAPI.SH_Get;
+import StubHubAPI.SH_HttpRequest;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import java.util.Iterator;
@@ -11,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class SH_Find_Events extends SH_Get {
+public class SH_Find_Events extends SH_HttpRequest {
 
     //Number of events returned.
     public int count = 0;

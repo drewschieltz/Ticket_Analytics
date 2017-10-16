@@ -6,16 +6,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.HashMap;
 import java.net.URLEncoder;
-import StubHubAPI.SearchAPI.SH_Find_Events;
-import StubHubAPI.SearchAPI.SH_Find_Listings;
-import Helpers.Email;
+import StubHubAPI.SearchAPI.*;
 import StubHubAPI.SH_HttpRequest;
 import com.mongodb.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class StubHub_Crawler {
+class StubHub_Crawler {
 
     /*
      * Fields.
@@ -25,22 +23,10 @@ public class StubHub_Crawler {
 
 
     /*
-     * Shutdown hook.
+     * Execute the StubHub crawler.
      */
-    static class ShutdownHook extends Thread {
-
-        public void run() {
-            Email email = new Email();
-            email.sendEmails("Program has terminated. Please restart.");
-        }
-    }
-
-
-    /*
-     * Execute the algorithm.
-     */
-    public static void main(String[] args) {
-        purgeDBs();
+    void executeCrawler() {
+        //purgeDBs();
         //System.exit(1);
 
         try {
@@ -52,10 +38,9 @@ public class StubHub_Crawler {
             System.out.println("Loading " + duration2[0] + " Listings took: " + duration2[1] + " minutes, " + duration2[2] + " seconds");
             System.out.println("Filtering Listings took: " + duration3[1] + " minutes, " + duration3[2]+ " seconds");
 
-            //purgeDBs();
-            Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+            purgeDBs();
         } catch (Exception e) {
-            Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+            e.printStackTrace();
         }
     }
 
