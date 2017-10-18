@@ -19,7 +19,7 @@ public class Email {
     /*
      * Send emails.
      */
-    public void sendEmails(String text) {
+    void sendEmails(String text) {
         Session session = Session.getInstance(properties(),
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {

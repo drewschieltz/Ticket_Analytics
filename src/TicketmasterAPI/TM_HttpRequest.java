@@ -5,7 +5,8 @@ package TicketmasterAPI;
 import Credentials.*;
 import Helpers.HttpRequest;
 import com.mongodb.*;
-import java.util.List;
+import org.apache.http.client.methods.*;
+import java.util.*;
 
 
 public class TM_HttpRequest extends HttpRequest{
@@ -13,7 +14,6 @@ public class TM_HttpRequest extends HttpRequest{
     /*
      * Token credentials.
      */
-    @Override
     protected Credentials tokenCredentials() {
         return new Ticketmaster_Token_Credentials();
     }
@@ -22,7 +22,6 @@ public class TM_HttpRequest extends HttpRequest{
     /*
      * Database.
      */
-    @Override
     protected DB db() {
         return mongoClient.getDB("Ticketmaster");
     }
@@ -31,8 +30,7 @@ public class TM_HttpRequest extends HttpRequest{
     /*
      * Determine if the database already exists.
      */
-    @Override
-    public boolean databaseDoesNotExist(MongoClient mongo) {
+    protected boolean databaseDoesNotExist(MongoClient mongo) {
         List<String> names = mongo.getDatabaseNames();
 
         for (final String name : names) {
@@ -43,4 +41,10 @@ public class TM_HttpRequest extends HttpRequest{
 
         return true;
     }
+
+
+    /*
+     * Set request headers (None required).
+     */
+    protected void setRequestHeaders(HttpGet request) {}
 }

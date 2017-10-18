@@ -1,9 +1,10 @@
+//Current package
 package Helpers;
 
 /*
   * Shutdown hook.
   */
-public class ShutdownHook extends Thread {
+public class Shutdown extends Thread {
 
     /*
      * Execute code on shutdown.

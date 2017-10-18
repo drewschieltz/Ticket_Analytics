@@ -3,30 +3,34 @@ package StubHubAPI.SearchAPI;
 
 //Dependencies
 import StubHubAPI.SH_HttpRequest;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import java.util.Iterator;
-import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.mongodb.*;
+import java.util.*;
+import org.json.*;
 
 
 public class SH_Find_Events extends SH_HttpRequest {
 
-    //Number of events returned.
+    /*
+     * Number of events returned.
+     */
     public int count = 0;
 
 
-    // HTTP GET request
+    /*
+     * HTTP GET Request
+     */
     public void getRequestData(Map<String, String> params) {
         StringBuilder sb = new StringBuilder();
         sb.append("https://api.stubhub.com/search/catalog/events/v3?");
 
         if (params != null) {
             Iterator iter = params.entrySet().iterator();
-            while (iter.hasNext()) {
+            for (int i = 0; iter.hasNext(); i++) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                sb.append("&");
+                if (i > 0) {
+                    sb.append("&");
+                }
+
                 sb.append(entry.getKey());
                 sb.append("=");
                 sb.append(entry.getValue());

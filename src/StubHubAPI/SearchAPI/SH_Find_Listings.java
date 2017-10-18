@@ -3,12 +3,9 @@ package StubHubAPI.SearchAPI;
 
 //Dependencies
 import StubHubAPI.SH_HttpRequest;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import java.util.Iterator;
-import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.mongodb.*;
+import java.util.*;
+import org.json.*;
 
 
 public class SH_Find_Listings extends SH_HttpRequest {

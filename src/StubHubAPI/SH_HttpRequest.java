@@ -5,7 +5,8 @@ package StubHubAPI;
 import Credentials.*;
 import Helpers.HttpRequest;
 import com.mongodb.*;
-import java.util.List;
+import org.apache.http.client.methods.*;
+import java.util.*;
 
 
 public class SH_HttpRequest extends HttpRequest{
@@ -13,7 +14,6 @@ public class SH_HttpRequest extends HttpRequest{
     /*
      * Token credentials.
      */
-    @Override
     protected Credentials tokenCredentials() {
         return new StubHub_Token_Credentials();
     }
@@ -22,7 +22,6 @@ public class SH_HttpRequest extends HttpRequest{
     /*
      * Database.
      */
-    @Override
     protected DB db() {
         return mongoClient.getDB("StubHub");
     }
@@ -31,7 +30,6 @@ public class SH_HttpRequest extends HttpRequest{
     /*
      * Determine if the database already exists.
      */
-    @Override
     protected boolean databaseDoesNotExist(MongoClient mongo) {
         List<String> names = mongo.getDatabaseNames();
 
@@ -42,5 +40,13 @@ public class SH_HttpRequest extends HttpRequest{
         }
 
         return true;
+    }
+
+    /*
+     * Set request headers.
+     */
+    protected void setRequestHeaders(HttpGet request) {
+        request.setHeader("Authorization", "Bearer " + tokenCredentials().applicationToken());
+        request.setHeader("User-Agent", "Mozilla/5.0");
     }
 }

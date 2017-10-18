@@ -4,17 +4,13 @@ package Helpers;
 //Dependencies
 import Credentials.Credentials;
 import com.mongodb.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
-import org.json.XML;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.client.params.*;
+import org.apache.http.impl.client.*;
+import org.json.*;
+import java.io.*;
 import java.util.Set;
 
 
@@ -31,7 +27,35 @@ public abstract class HttpRequest {
 
 
     /*******************************************************
-     * Send Get Request
+     * Abstract Methods
+     ******************************************************/
+
+    /*
+     * Token credentials.
+     */
+    protected abstract Credentials tokenCredentials();
+
+
+    /*
+    * Determine if the database already exists.
+    */
+    protected abstract boolean databaseDoesNotExist(MongoClient mongo);
+
+
+    /*
+     * Database.
+     */
+    protected abstract DB db();
+
+
+    /*
+     * Set request headers.
+     */
+    protected abstract void setRequestHeaders(HttpGet request);
+
+
+    /*******************************************************
+     * HTTP Request
      ******************************************************/
 
     /*
@@ -46,12 +70,9 @@ public abstract class HttpRequest {
             HttpClient client = new DefaultHttpClient();
             client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
 
+            //Set up Http request
             HttpGet request = new HttpGet(path);
-
-            // add request headers
-            String token = tokenCredentials().applicationToken();
-            request.setHeader("Authorization", "Bearer " + token);
-            request.setHeader("User-Agent", "Mozilla/5.0");
+            setRequestHeaders(request);
 
             //Execute request
             HttpResponse response = client.execute(request);
@@ -70,7 +91,7 @@ public abstract class HttpRequest {
                         new InputStreamReader(response.getEntity().getContent()));
 
                 StringBuilder result = new StringBuilder();
-                String line = "";
+                String line;
                 while ((line = rd.readLine()) != null) {
                     result.append(line);
                 }
@@ -103,28 +124,6 @@ public abstract class HttpRequest {
             e.printStackTrace();
         }
     }
-
-
-    /*******************************************************
-     * Abstract Methods
-     ******************************************************/
-
-    /*
-     * Token credentials.
-     */
-    protected abstract Credentials tokenCredentials();
-
-
-    /*
-    * Determine if the database already exists.
-    */
-    protected abstract boolean databaseDoesNotExist(MongoClient mongo);
-
-
-    /*
-     * Database.
-     */
-    protected abstract DB db();
 
 
     /*******************************************************

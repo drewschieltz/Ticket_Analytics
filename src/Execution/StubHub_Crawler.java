@@ -2,31 +2,28 @@
 package Execution;
 
 //Dependencies
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
-import java.util.HashMap;
-import java.net.URLEncoder;
+import java.io.*;
+import java.util.*;
+import java.net.*;
 import StubHubAPI.SearchAPI.*;
 import StubHubAPI.SH_HttpRequest;
 import com.mongodb.*;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
 
 
-class StubHub_Crawler {
+class StubHub_Crawler extends Crawler {
 
     /*
-     * Fields.
+     * StubHub database.
      */
-    private static MongoClient mongoClient = new MongoClient( "localhost" , 27017);
-    private static DB db = mongoClient.getDB("StubHub");
+    private static DB db = mongoClient().getDB("StubHub");
 
 
     /*
      * Execute the StubHub crawler.
      */
-    void executeCrawler() {
-        //purgeDBs();
+    protected void executeCrawler() {
+        //purgeCollections();
         //System.exit(1);
 
         try {
@@ -37,8 +34,6 @@ class StubHub_Crawler {
             System.out.println("Loading " + duration1[0] + " Events took: " + duration1[1] + " minutes, " + duration1[2] + " seconds");
             System.out.println("Loading " + duration2[0] + " Listings took: " + duration2[1] + " minutes, " + duration2[2] + " seconds");
             System.out.println("Filtering Listings took: " + duration3[1] + " minutes, " + duration3[2]+ " seconds");
-
-            purgeDBs();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,7 +43,7 @@ class StubHub_Crawler {
     /*
      * Purge the databases.
      */
-    private static void purgeDBs() {
+    protected void purgeCollections() {
         BasicDBObject basicDBObj = new BasicDBObject();
 
         DBCollection dbColl = db.getCollection("Collected_Events");
@@ -63,7 +58,7 @@ class StubHub_Crawler {
 
 
     /*
-     * Load the "Collected Events" table.
+     * Load the "Collected_Events" table.
      */
     private static long[] loadEventsTable() {
         long start = System.nanoTime();
@@ -104,7 +99,7 @@ class StubHub_Crawler {
 
 
     /*
-     * Load the "Collected Listings" table.
+     * Load the "Collected_Listings" table.
      */
     private static long[] loadListingsTable() {
         long start = System.nanoTime();
@@ -170,23 +165,6 @@ class StubHub_Crawler {
 
         long end = System.nanoTime();
         return timeTracker(0, start, end);
-    }
-
-
-    /*
-     * Time tracker.
-     */
-    private static long[] timeTracker(long count, long start, long end) {
-        long[] times = new long[3];
-
-        long duration = (end-start)/1000000000;
-        long minutes = duration/60;
-        long seconds = duration - (minutes*60);
-
-        times[0] = count;
-        times[1] = minutes;
-        times[2] = seconds;
-        return times;
     }
 }
 
