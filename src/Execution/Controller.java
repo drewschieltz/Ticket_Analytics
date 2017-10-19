@@ -14,13 +14,13 @@ public class Controller {
         //purgeCollections();
         //System.exit(5);
 
-        initShutdownHook();
+        //initShutdownHook();
 
         Ticketmaster_Crawler tmCrawler = new Ticketmaster_Crawler();
-        StubHub_Crawler shCrawler = new StubHub_Crawler();
+        //StubHub_Crawler shCrawler = new StubHub_Crawler();
 
         tmCrawler.executeCrawler();
-        shCrawler.executeCrawler();
+        //shCrawler.executeCrawler();
     }
 
 

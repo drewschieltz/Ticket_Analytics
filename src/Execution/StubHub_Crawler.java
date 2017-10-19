@@ -54,6 +54,10 @@ class StubHub_Crawler extends Crawler {
 
         dbColl = db.getCollection("Approved_Listings");
         dbColl.remove(basicDBObj);
+
+        System.out.println();
+        System.out.println("STUBHUB DATABASE COLLECTIONS CLEARED!!!!!");
+        System.out.println();
     }
 
 
