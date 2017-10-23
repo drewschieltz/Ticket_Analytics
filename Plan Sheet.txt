@@ -1,0 +1,67 @@
+PLAN SHEET
+
+Subroutines
+===========
+	1. Ticketmaster Pre-Onsale Routine
+		- System Path
+			A. Load StubHub event database
+			B. Find Ticketmaster events that go onsale within 7-14 days
+			C. Filter out events that don't have corresponding StuhHub event data
+			D. Form JSON that combines revelant Ticketmaster & StubHub event data
+			E. Determine profitibility of remaining JSON data
+			F. Email profitable events to user bank
+		- Additional Notes
+			A. Loop the system path for each onsale date between 7-14 days in advance
+			B. Find event details from Ticketmaster API?
+			C. Purge Ticketmaster events database after each use
+			D. Purge StubHub database once per day
+			E. Track successful events to ensure they are only emailed once
+	2. StubHub "Buy-Low" Routine
+		- System Path
+			A. Load StubHub event database
+			B. Load StubHub listings database
+			C. Determine profitibility of all listings
+			D. Email profitable listings to user bank
+		- Notes
+			A. Choose to use Ticketmaster to support algorithm?
+			B. Purge listings database after each use
+			C. Purge StubHub database once per day
+			D. Track successful listings to ensure they are only emailed once
+	3. Ticketmaster Deals Routine
+		- System Path
+			A. More info to come
+		- Notes
+			A. N/A
+	4. Cleanup
+		- More info to come
+			
+
+Flow of Events - Subroutine 1
+=============================
+	A. Load the StubHub Event database
+		- Only if it needs to be reloaded
+	B. Load the Ticketmaster Event database
+		- Find events going onsale 7-14 days in advance
+	C-D. Build new database of combined, relevants Ticketmaster/StubHub data
+		- Retrieve Stubhub event data
+		- If StubHub event is available, build a new JSON entry containing the relevant data from each company's event entry
+		- Load new JSON data into new database
+	E. Run data from new database through the profitibility alogrithm
+		- Details of algorithm undetermined
+	F. Email profitable events to user bank
+		- Check to see if event has already been emailed (Not set on this yet...)
+		- If event has not been emailed already, load profitable events into a temporary database
+		- At end of day, format email based on profitable events in the temporary database
+		- Once email has been sent, move data from temporary database to successful-listing database
+			- Used to prevent multiple events being sent more than once
+		- Data here will remain intact until onsale date has passed
+	
+
+Flow of Events - Subroutine 2
+=============================
+	- More to come
+
+	
+Flow of Events - Subroutine 3
+=============================
+	- More to come

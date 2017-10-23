@@ -53,26 +53,31 @@ public class Ticketmaster_Crawler extends Crawler {
         Map<String, String > params = new HashMap<String, String>();
         params.put("countryCode", "US");
         params.put("classificationName", "music");
-
-        params.put("onsaleOnStartDate", "2017-10-31");
-        params.put("size", "200");
+        params.put("onsaleOnStartDate", "2017-10-21");
 
         TM_Event_Search eventSearch = new TM_Event_Search();
         eventSearch.getRequestData(params);
 
-        for (int i=2; i <= eventSearch.pages; i++) {
+        params.put("size", Integer.toString(elementsPerPage(eventSearch)));
+
+        for (int i=0; i < eventSearch.pages || i == 0; i++) {
             params.put("page", Integer.toString(i));
             eventSearch.getRequestData(params);
-            params.remove("start");
-        }
-
-        int elements = eventSearch.elements;
-        if (elements > 1000) {
-            elements = 1000;
         }
 
         long end = System.nanoTime();
+        return timeTracker(eventSearch.elements, start, end);
+    }
 
-        return timeTracker(elements, start, end);
+
+    /*
+     * Determine the "size" parameter value.
+     */
+    private static int elementsPerPage(TM_Event_Search eventSearch) {
+        for (int i = 200; true; i--) {
+            if (eventSearch.elements % i == 0) {
+                return i;
+            }
+        }
     }
 }
