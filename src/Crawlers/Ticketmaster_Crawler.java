@@ -1,5 +1,5 @@
 //Current package
-package Execution;
+package Crawlers;
 
 //Dependencies
 import TicketmasterAPI.DiscoveryAPI.TM_Event_Search;
@@ -18,11 +18,13 @@ public class Ticketmaster_Crawler extends Crawler {
     /*
      * Execute the Ticketmaster crawler.
      */
-    protected void executeCrawler() {
+    public void executeCrawler() {
         try {
             purgeCollections();
-            long[] duration1 = loadEventsTable();
-            System.out.println("Loading " + duration1[0] + " Events took: " + duration1[1] + " minutes, " + duration1[2] + " seconds");
+            long[] duration = loadEventsTable();
+
+            System.out.println("Loading " + duration[0] + " Events took: " + duration[1] +
+                                " minutes, " + duration[2] + " seconds");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,7 +34,7 @@ public class Ticketmaster_Crawler extends Crawler {
     /*
     * Purge the databases.
     */
-    protected void purgeCollections() {
+    public void purgeCollections() {
         BasicDBObject basicDBObj = new BasicDBObject();
 
         DBCollection dbColl = db.getCollection("Collected_Events");

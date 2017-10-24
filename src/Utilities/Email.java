@@ -1,5 +1,5 @@
 //Current package
-package Helpers;
+package Utilities;
 
 //Dependencies
 import Credentials.Email_Credentials;

@@ -1,5 +1,5 @@
 //Current package
-package Execution;
+package Crawlers;
 
 //Dependencies
 import java.io.*;
@@ -11,7 +11,7 @@ import com.mongodb.*;
 import org.json.*;
 
 
-class StubHub_Crawler extends Crawler {
+public class StubHub_Crawler extends Crawler {
 
     /*
      * StubHub database.
@@ -43,7 +43,7 @@ class StubHub_Crawler extends Crawler {
     /*
      * Purge the databases.
      */
-    protected void purgeCollections() {
+    public void purgeCollections() {
         BasicDBObject basicDBObj = new BasicDBObject();
 
         DBCollection dbColl = db.getCollection("Collected_Events");

@@ -1,5 +1,5 @@
 //Current package
-package Helpers;
+package Crawlers;
 
 //Dependencies
 import Credentials.Credentials;

@@ -1,5 +1,5 @@
 //Current package
-package Execution;
+package Crawlers;
 
 //Dependencies
 import com.mongodb.*;

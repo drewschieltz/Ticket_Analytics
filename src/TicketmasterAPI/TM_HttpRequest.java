@@ -3,13 +3,13 @@ package TicketmasterAPI;
 
 //Dependencies
 import Credentials.*;
-import Helpers.HttpRequest;
+import Crawlers.HttpRequest;
 import com.mongodb.*;
 import org.apache.http.client.methods.*;
 import java.util.*;
 
 
-public class TM_HttpRequest extends HttpRequest{
+public class TM_HttpRequest extends HttpRequest {
 
     /*
      * Token credentials.

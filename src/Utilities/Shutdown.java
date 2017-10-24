@@ -1,9 +1,7 @@
 //Current package
-package Helpers;
+package Utilities;
 
-/*
-  * Shutdown hook.
-  */
+
 public class Shutdown extends Thread {
 
     /*

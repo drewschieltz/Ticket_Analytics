@@ -3,13 +3,13 @@ package StubHubAPI;
 
 //Dependencies
 import Credentials.*;
-import Helpers.HttpRequest;
+import Crawlers.HttpRequest;
 import com.mongodb.*;
 import org.apache.http.client.methods.*;
 import java.util.*;
 
 
-public class SH_HttpRequest extends HttpRequest{
+public class SH_HttpRequest extends HttpRequest {
 
     /*
      * Token credentials.
