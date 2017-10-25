@@ -9,6 +9,6 @@ public class Shutdown extends Thread {
      */
     public void run() {
         Email email = new Email();
-        email.sendEmails("Program has been terminated. Please review cause for termination.");
+        email.sendEmails(0);
     }
 }

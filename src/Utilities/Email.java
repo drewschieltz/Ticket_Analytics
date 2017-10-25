@@ -10,16 +10,27 @@ import javax.mail.internet.*;
 
 public class Email {
 
+    /*
+     * Credentials field.
+     */
     private static Email_Credentials credentials = new Email_Credentials();
 
-    //Test code
-    public static void main(String [] args) {}
+
+    /*
+     * Test code.
+     */
+    public static void main(String [] args) {
+        //sendEmails(0);
+        //sendEmails(1);
+        //sendEmails(2);
+        //sendEmails(3);
+    }
 
 
     /*
      * Send emails.
      */
-    void sendEmails(String text) {
+    void sendEmails(int code) {
         Session session = Session.getInstance(properties(),
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -28,12 +39,65 @@ public class Email {
                 });
 
         try {
-            Transport.send(formatMessage(session, text));
-            System.out.println();
-            System.out.println("Email(s) sent successfully!");
+            for (int i = 0; i < getRecipients(code).size(); i++) {
+                Transport.send(formatMessage(session, emailBody(code).toString(), code, i));
+                System.out.println();
+                System.out.println("Code " + code + ": Email sent to " + getRecipientName(i) + " successfully!");
+            }
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    /*
+     * Return the email subject.
+     */
+    private static String getEmailSubject(int code) {
+        switch (code) {
+            case 0 : return "Program Terminated - No Errors";
+            case 1 : return "Upcoming Event Recommendation";
+            case 2 : return "StubHub Listing Recommendation";
+            case 3 : return "Program Terminated - Errors Found";
+            default : return "Disregard";
+        }
+    }
+
+
+    /*
+     * Return email body based on code parameter.
+     *
+     * 0 = Clean program shutdown
+     * 1 = Daily Ticketmaster Events
+     * 2 = Profitable StubHub Listings
+     * 3 = Program ends based on error.
+     */
+    private static StringBuilder emailBody(int code) {
+        StringBuilder sb = new StringBuilder();
+
+        switch (code) {
+            case 0 : {
+                sb.append("The program has terminated with no issues.");
+                break;
+            }
+            case 1 : {
+                sb.append("This is where I would send TM events.");
+                break;
+            }
+            case 2 : {
+                sb.append("This is where I would send StubHub listings.");
+                break;
+            }
+            case 3 : {
+                sb.append("The program has terminated with issues.");
+                break;
+            }
+            default : {
+                sb.append("Error - Please disregard this issue.");
+            }
+        }
+
+        return sb;
     }
 
 
@@ -53,53 +117,52 @@ public class Email {
 
 
     /*
-     * Format recipient string.
-     */
-    private static String getAddressList() {
-        ArrayList<String> recipients = getRecipients();
-        StringBuilder sb = new StringBuilder();
-        sb.append(recipients.get(0));
-
-        for (int i=1; i < recipients.size(); i++) {
-            sb.append(",");
-            sb.append(recipients.get(i));
-        }
-
-        return sb.toString();
-    }
-
-
-    /*
      * Return email recipients.
      */
-    private static ArrayList<String> getRecipients() {
+    private static ArrayList<String> getRecipients(int code) {
         ArrayList<String> recipients = new ArrayList<String>();
 
         recipients.add("drewschieltz@gmail.com");
-        //recipients.add("aschieltz@midmark.com");
-        //recipients.add("travispulfer@gmail.com");
+
+        //Non-developer emails only
+        if (code == 1 || code == 2) {
+            recipients.add("aschieltz@midmark.com");
+            //recipients.add("travispulfer@gmail.com");
+        }
 
         return recipients;
     }
 
 
     /*
+     * Return the recipient name.
+     */
+    private static String getRecipientName(int recipientID) {
+        switch (recipientID) {
+            case 0 : return "Andrew";
+            case 1 : return "Travis";
+            default : return "Unknown User";
+        }
+    }
+
+
+    /*
      * Format the email subject/body.
      */
-    private static Message formatMessage(Session session, String text) {
+    private static Message formatMessage(Session session, String text, int code, int recipientID) {
         Message message = new MimeMessage(session);
 
         try {
             message.setFrom(new InternetAddress(credentials.username()));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(getAddressList()));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(getRecipients(code).get(recipientID)));
 
-            message.setSubject("Test Subject");
+            message.setSubject(getEmailSubject(code));
 
             if (text.isEmpty()) {
-                message.setText("Recipient,"
-                        + "\n\nThis is a test of the automatic email system. Please disregard.");
+                message.setText("Error - Please disregard.");
             } else {
-                message.setText(text);
+                String sb = "Good morning " + getRecipientName(recipientID) + ",\n\n" + text;
+                message.setText(sb);
             }
 
             return message;
