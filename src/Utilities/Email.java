@@ -56,8 +56,8 @@ public class Email {
     private static String getEmailSubject(int code) {
         switch (code) {
             case 0 : return "Program Terminated - No Errors";
-            case 1 : return "Upcoming Event Recommendation";
-            case 2 : return "StubHub Listing Recommendation";
+            case 1 : return "Upcoming Event Recommendations";
+            case 2 : return "StubHub Listing Recommendations";
             case 3 : return "Program Terminated - Errors Found";
             default : return "Disregard";
         }
@@ -126,8 +126,8 @@ public class Email {
 
         //Non-developer emails only
         if (code == 1 || code == 2) {
-            recipients.add("aschieltz@midmark.com");
-            //recipients.add("travispulfer@gmail.com");
+            //recipients.add("aschieltz@midmark.com");
+            recipients.add("travispulfer@gmail.com");
         }
 
         return recipients;

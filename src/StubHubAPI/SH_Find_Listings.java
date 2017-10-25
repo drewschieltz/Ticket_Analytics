@@ -1,57 +1,46 @@
 //Current package
-package StubHubAPI.SearchAPI;
+package StubHubAPI;
 
 //Dependencies
-import StubHubAPI.SH_HttpRequest;
 import com.mongodb.*;
 import java.util.*;
 import org.json.*;
 
 
-public class SH_Find_Events extends SH_HttpRequest {
+public class SH_Find_Listings extends SH_HttpRequest {
 
-    /*
-     * Number of events returned.
-     */
-    public int count = 0;
-
-
-    /*
-     * HTTP GET Request
-     */
-    public void getRequestData(Map<String, String> params) {
+    // HTTP GET request
+    public void getRequestData(String eventID, Map<String, String> params) {
         StringBuilder sb = new StringBuilder();
-        sb.append("https://api.stubhub.com/search/catalog/events/v3?");
+        sb.append("https://api.stubhub.com/search/inventory/v2?eventid=");
+        sb.append(eventID);
 
         if (params != null) {
             Iterator iter = params.entrySet().iterator();
-            for (int i = 0; iter.hasNext(); i++) {
+            while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                if (i > 0) {
-                    sb.append("&");
-                }
-
+                sb.append("&");
                 sb.append(entry.getKey());
                 sb.append("=");
                 sb.append(entry.getValue());
             }
         }
 
-        sendGetRequest(sb.toString(), "Collected_Events");
+        sendGetRequest(sb.toString(), "Collected_Listings");
     }
 
 
     /*
-    * Load data into database.
-    *
-    * Return codes:
-    *               OK - Success
-    *    DB Conn Error - Database connection error
-    *           DB DNE - Database does not exist
-    *   Collection DNE - Collection does not exist
-    *        Duplicate - Entry already exists
-    *          Unknown - Unknown Error
-    */
+     * Load data into database.
+     *
+     * Return codes:
+     *               OK - Success
+     *    DB Conn Error - Database connection error
+     *           DB DNE - Database does not exist
+     *   Collection DNE - Collection does not exist
+     *        Duplicate - Entry already exists
+     *          Unknown - Unknown Error
+     */
     public String loadIntoDB(JSONObject json, String collectionName) {
         try {
             System.out.println("Connecting to database.....");
@@ -66,9 +55,7 @@ public class SH_Find_Events extends SH_HttpRequest {
             System.out.println("Collection retrieval successful!");
             System.out.println();
 
-            count = json.getInt("numFound");
-
-            JSONArray array = json.getJSONArray("events");
+            JSONArray array = json.getJSONArray("listing");
             for (int i=0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
 

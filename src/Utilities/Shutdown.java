@@ -4,11 +4,19 @@ package Utilities;
 
 public class Shutdown extends Thread {
 
+    public boolean success = false;
+
+
     /*
      * Execute code on shutdown.
      */
     public void run() {
         Email email = new Email();
-        email.sendEmails(0);
+
+        if (success) {
+            email.sendEmails(0);
+        } else {
+            email.sendEmails(3);
+        }
     }
 }

@@ -2,7 +2,7 @@
 package Crawlers;
 
 //Dependencies
-import TicketmasterAPI.DiscoveryAPI.TM_Event_Search;
+import TicketmasterAPI.TM_Event_Search;
 import com.mongodb.*;
 import java.util.*;
 

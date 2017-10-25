@@ -5,7 +5,9 @@ package Crawlers;
 import java.io.*;
 import java.util.*;
 import java.net.*;
-import StubHubAPI.SearchAPI.*;
+
+import StubHubAPI.SH_Find_Events;
+import StubHubAPI.SH_Find_Listings;
 import StubHubAPI.SH_HttpRequest;
 import com.mongodb.*;
 import org.json.*;
@@ -22,7 +24,7 @@ public class StubHub_Crawler extends Crawler {
     /*
      * Execute the StubHub crawler.
      */
-    protected void executeCrawler() {
+    public void executeCrawler() {
         //purgeCollections();
         //System.exit(1);
 

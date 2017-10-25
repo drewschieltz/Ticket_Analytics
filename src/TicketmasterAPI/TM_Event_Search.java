@@ -1,8 +1,7 @@
 //Current package
-package TicketmasterAPI.DiscoveryAPI;
+package TicketmasterAPI;
 
 //Dependencies
-import TicketmasterAPI.TM_HttpRequest;
 import com.mongodb.*;
 import org.json.*;
 import java.util.*;

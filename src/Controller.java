@@ -6,19 +6,25 @@ import Utilities.Shutdown;
 public class Controller {
 
     /*
+     * Shutdown thread.
+     */
+    private static Shutdown shutdown = new Shutdown();
+
+
+    /*
      * Execute the algorithm.
      */
     public static void main(String[] args) {
-        //purgeCollections();
-        //System.exit(5);
-
         //initShutdownHook();
+        purgeCollections();
 
         Ticketmaster_Crawler tmCrawler = new Ticketmaster_Crawler();
-        //StubHub_Crawler shCrawler = new StubHub_Crawler();
+        StubHub_Crawler shCrawler = new StubHub_Crawler();
 
         tmCrawler.executeCrawler();
-        //shCrawler.executeCrawler();
+        shCrawler.executeCrawler();
+
+        shutdown.success = true;
     }
 
 
@@ -26,7 +32,7 @@ public class Controller {
      * Initialize shutdown hook.
      */
     private static void initShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Shutdown());
+        Runtime.getRuntime().addShutdownHook(shutdown);
     }
 
 
