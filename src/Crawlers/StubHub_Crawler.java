@@ -5,12 +5,8 @@ package Crawlers;
 import java.io.*;
 import java.util.*;
 import java.net.*;
-
-import StubHubAPI.SH_Find_Events;
-import StubHubAPI.SH_Find_Listings;
-import StubHubAPI.SH_HttpRequest;
+import StubHubAPI.*;
 import com.mongodb.*;
-import org.json.*;
 
 
 public class StubHub_Crawler extends Crawler {
@@ -25,17 +21,12 @@ public class StubHub_Crawler extends Crawler {
      * Execute the StubHub crawler.
      */
     public void executeCrawler() {
-        //purgeCollections();
-        //System.exit(1);
-
         try {
             long[] duration1 = loadEventsTable();
-            long[] duration2 = loadListingsTable();
-            long[] duration3 = filterListings();
+            //long[] duration2 = loadListingsTable();
 
             System.out.println("Loading " + duration1[0] + " Events took: " + duration1[1] + " minutes, " + duration1[2] + " seconds");
-            System.out.println("Loading " + duration2[0] + " Listings took: " + duration2[1] + " minutes, " + duration2[2] + " seconds");
-            System.out.println("Filtering Listings took: " + duration3[1] + " minutes, " + duration3[2]+ " seconds");
+            //System.out.println("Loading " + duration2[0] + " Listings took: " + duration2[1] + " minutes, " + duration2[2] + " seconds");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,43 +125,6 @@ public class StubHub_Crawler extends Crawler {
         long end = System.nanoTime();
         long count = db.getCollection("Collected_Listings").count();
         return timeTracker(count, start, end);
-    }
-
-
-    /*
-     / Filter listings to find profitable ones.
-     */
-    private static long[] filterListings() throws JSONException {
-        long start = System.nanoTime();
-
-        DBCollection collection = db.getCollection("Collected_Listings");
-        DBCursor cursor = collection.find();
-
-        for (int i = 1; cursor.hasNext(); i++) {
-            System.out.println("Checking Listing " + i + " of " + collection.count());
-            DBObject obj = cursor.next();
-
-            if (obj.keySet().contains("faceValue")) {
-                double faceValue;
-                double currentPrice;
-
-                JSONObject fvObj = new JSONObject(obj.get("faceValue").toString());
-                faceValue = Double.parseDouble(fvObj.get("amount").toString());
-
-                JSONObject cpObj = new JSONObject(obj.get("currentPrice").toString());
-                currentPrice = Double.parseDouble(cpObj.get("amount").toString());
-
-                if (faceValue < 400 & faceValue > currentPrice + 50) {
-                    JSONObject json = new JSONObject(obj);
-
-                    SH_HttpRequest httpRequest = new SH_HttpRequest();
-                    httpRequest.loadIntoDB(json, "Approved_Listings");
-                }
-            }
-        }
-
-        long end = System.nanoTime();
-        return timeTracker(0, start, end);
     }
 }
 

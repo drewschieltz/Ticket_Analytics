@@ -4,6 +4,7 @@ package Crawlers;
 //Dependencies
 import TicketmasterAPI.TM_Event_Search;
 import com.mongodb.*;
+import java.text.*;
 import java.util.*;
 
 
@@ -20,9 +21,7 @@ public class Ticketmaster_Crawler extends Crawler {
      */
     public void executeCrawler() {
         try {
-            purgeCollections();
             long[] duration = loadEventsTable();
-
             System.out.println("Loading " + duration[0] + " Events took: " + duration[1] +
                                 " minutes, " + duration[2] + " seconds");
         } catch (Exception e) {
@@ -52,19 +51,37 @@ public class Ticketmaster_Crawler extends Crawler {
     private static long[] loadEventsTable() {
         long start = System.nanoTime();
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 7);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
         Map<String, String > params = new HashMap<String, String>();
+        params.put("onsaleOnStartDate", df.format(calendar.getTime()));
         params.put("countryCode", "US");
         params.put("classificationName", "music");
-        params.put("onsaleOnStartDate", "2017-10-21");
 
         TM_Event_Search eventSearch = new TM_Event_Search();
         eventSearch.getRequestData(params);
 
-        params.put("size", Integer.toString(elementsPerPage(eventSearch)));
+        if (eventSearch.elements > 999) {
+            params.put("size", "200");
 
-        for (int i=0; i < eventSearch.pages || i == 0; i++) {
-            params.put("page", Integer.toString(i));
+            for (int i = 0; i < 4; i++) {
+                params.put("page", Integer.toString(i));
+                eventSearch.getRequestData(params);
+            }
+
+            params.put("page", "4");
+            params.put("size", "199");
             eventSearch.getRequestData(params);
+        } else {
+            int pageSize = elementsPerPage(eventSearch);
+            params.put("size", Integer.toString(pageSize));
+
+            for (int i=0; i < eventSearch.pages || i == 0; i++) {
+                params.put("page", Integer.toString(i));
+                eventSearch.getRequestData(params);
+            }
         }
 
         long end = System.nanoTime();

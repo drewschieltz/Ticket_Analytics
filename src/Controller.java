@@ -1,4 +1,5 @@
 //Dependencies
+import Algorithm.Ticketmaster_Events;
 import Crawlers.*;
 import Utilities.Shutdown;
 
@@ -21,8 +22,11 @@ public class Controller {
         Ticketmaster_Crawler tmCrawler = new Ticketmaster_Crawler();
         StubHub_Crawler shCrawler = new StubHub_Crawler();
 
-        tmCrawler.executeCrawler();
         shCrawler.executeCrawler();
+        tmCrawler.executeCrawler();
+
+        Ticketmaster_Events tmEvents = new Ticketmaster_Events();
+        tmEvents.executeAlgorithm();
 
         shutdown.success = true;
     }
