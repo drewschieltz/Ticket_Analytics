@@ -7,14 +7,24 @@ import java.util.*;
 import java.net.*;
 import StubHubAPI.*;
 import com.mongodb.*;
+import com.mongodb.util.JSON;
+import jdk.internal.cmm.SystemResourcePressureImpl;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class StubHub_Crawler extends Crawler {
 
     /*
+     * Ticketmaster database.
+     */
+    private static DB tmDB = mongoClient().getDB("Ticketmaster");
+
+
+    /*
      * StubHub database.
      */
-    private static DB db = mongoClient().getDB("StubHub");
+    private static DB shDB = mongoClient().getDB("StubHub");
 
 
     /*
@@ -22,11 +32,8 @@ public class StubHub_Crawler extends Crawler {
      */
     public void executeCrawler() {
         try {
-            long[] duration1 = loadEventsTable();
-            //long[] duration2 = loadListingsTable();
-
-            System.out.println("Loading " + duration1[0] + " Events took: " + duration1[1] + " minutes, " + duration1[2] + " seconds");
-            //System.out.println("Loading " + duration2[0] + " Listings took: " + duration2[1] + " minutes, " + duration2[2] + " seconds");
+            long[] duration = loadEventsTable();
+            System.out.println("Loading " + duration[0] + " Events took: " + duration[1] + " minutes, " + duration[2] + " seconds");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,13 +46,13 @@ public class StubHub_Crawler extends Crawler {
     public void purgeCollections() {
         BasicDBObject basicDBObj = new BasicDBObject();
 
-        DBCollection dbColl = db.getCollection("Collected_Events");
+        DBCollection dbColl = shDB.getCollection("Collected_Events");
         dbColl.remove(basicDBObj);
 
-        dbColl = db.getCollection("Collected_Listings");
+        dbColl = shDB.getCollection("Collected_Listings");
         dbColl.remove(basicDBObj);
 
-        dbColl = db.getCollection("Approved_Listings");
+        dbColl = shDB.getCollection("Approved_Listings");
         dbColl.remove(basicDBObj);
 
         System.out.println();
@@ -55,8 +62,93 @@ public class StubHub_Crawler extends Crawler {
 
 
     /*
-     * Load the "Collected_Events" table.
+    * Load the "Collected_Listings" table.
+    */
+    private static long[] loadEventsTable() {
+        long start = System.nanoTime();
+
+        DBCollection collection = tmDB.getCollection("Collected_Events");
+        DBCursor cursor = collection.find();
+        SH_Find_Events findEvents = new SH_Find_Events();
+
+        int index = 1;
+        while (cursor.hasNext()) {
+            System.out.println("Loading Event " + index + " of " + collection.count());
+            DBObject rootObj = cursor.next();
+
+            //Get coordinates
+            String[] coordinates = getEventCoordinates(rootObj);
+            String lat = coordinates[0];
+            String lng = coordinates[1];
+
+            //Get date
+            String date = getEventDate(rootObj);
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("point", lat + "," + lng);
+            params.put("eventDate", date);
+
+            try {
+                String name = URLEncoder.encode(rootObj.get("name").toString(), "UTF-8");
+                params.put("name", name);
+            } catch (UnsupportedEncodingException e) {
+                System.out.println("One or more parameters could not be encoded. Default values will be queried.");
+                System.out.println();
+            }
+
+            findEvents.getRequestData(params);
+            index++;
+        }
+
+        long end = System.nanoTime();
+        long count = shDB.getCollection("Collected_Events").count();
+        return timeTracker(count, start, end);
+    }
+
+
+    /*
+     * Get event coordinates.
      */
+    private static String[] getEventCoordinates(DBObject root) {
+        String[] coordinates = new String[2];
+
+        DBObject embeddedObj = (DBObject) root.get("_embedded");
+        ArrayList<DBObject> venues = (ArrayList<DBObject>) embeddedObj.get("venues");
+
+        for (int i = 0; i < venues.size(); i++) {
+            DBObject venue = venues.get(i);
+            DBObject location= (DBObject) venue.get("location");
+
+            if (location!= null) {
+                coordinates[0] = location.get("latitude").toString();
+                coordinates[1] = location.get("longitude").toString();
+            }
+        }
+
+        return coordinates;
+    }
+
+
+    /*
+     * Get event date.
+     */
+    private static String getEventDate(DBObject root) {
+        DBObject dates = (DBObject) root.get("dates");
+        DBObject localDate = (DBObject) dates.get("start");
+
+        if (localDate!= null) {
+            return localDate.get("dateTime").toString();
+        }
+
+        return "";
+    }
+
+
+    //GETS EVENTS FROM STUBHUB
+    /*
+     * Load the "Collected_Events" table... NOT USED!!!!!!!!
+     */
+    /*
     private static long[] loadEventsTable() {
         long start = System.nanoTime();
 
@@ -93,38 +185,6 @@ public class StubHub_Crawler extends Crawler {
         long end = System.nanoTime();
         return timeTracker(findEvents.count, start, end);
     }
-
-
-    /*
-     * Load the "Collected_Listings" table.
-     */
-    private static long[] loadListingsTable() {
-        long start = System.nanoTime();
-
-        SH_Find_Listings findListings = new SH_Find_Listings();
-        Map<String, String> params = new HashMap<String, String>();
-
-        //Load parameters
-        params.put("pricemax", "400");
-        params.put("quantity", "2");
-        params.put("deliverytypelist", "2,5");
-
-        DBCollection collection = db.getCollection("Collected_Events");
-        DBCursor cursor = collection.find();
-
-        int index = 1;
-        while (cursor.hasNext()) {
-            System.out.println("Loading Event " + index + " of " + collection.count());
-            DBObject obj = cursor.next();
-            String id = obj.get("id").toString();
-
-            findListings.getRequestData(id, params);
-            index++;
-        }
-
-        long end = System.nanoTime();
-        long count = db.getCollection("Collected_Listings").count();
-        return timeTracker(count, start, end);
-    }
+    */
 }
 

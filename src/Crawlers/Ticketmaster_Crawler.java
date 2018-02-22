@@ -52,7 +52,7 @@ public class Ticketmaster_Crawler extends Crawler {
         long start = System.nanoTime();
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 7);
+        calendar.add(Calendar.DAY_OF_YEAR, 3);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
         Map<String, String > params = new HashMap<String, String>();

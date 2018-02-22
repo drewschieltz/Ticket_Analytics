@@ -22,11 +22,11 @@ public class Controller {
         Ticketmaster_Crawler tmCrawler = new Ticketmaster_Crawler();
         StubHub_Crawler shCrawler = new StubHub_Crawler();
 
-        shCrawler.executeCrawler();
         tmCrawler.executeCrawler();
+        shCrawler.executeCrawler();
 
-        Ticketmaster_Events tmEvents = new Ticketmaster_Events();
-        tmEvents.executeAlgorithm();
+        //Ticketmaster_Events tmEvents = new Ticketmaster_Events();
+        //tmEvents.executeAlgorithm();
 
         shutdown.success = true;
     }

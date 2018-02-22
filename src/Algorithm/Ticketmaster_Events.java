@@ -17,8 +17,7 @@ public class Ticketmaster_Events extends Algorithm {
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            DBObject shObj = getStubHubEvent(getTMDateTime(obj), getTMVenueCoordinates(obj, true),
-                                             getTMVenueCoordinates(obj, false));
+            DBObject shObj = getStubHubEvent(getTMDateTime(obj), getTMVenueAddress(obj));
 
 
             if (shObj == null) {
@@ -33,25 +32,29 @@ public class Ticketmaster_Events extends Algorithm {
     /*
      * Find the corresponding StubHub event.
      */
-    private DBObject getStubHubEvent(String dateTime, String latitude, String longitude) {
+    private DBObject getStubHubEvent(String dateTime, String address) {
         DBCollection collection = shDB.getCollection("Collected_Events");
         DBCursor cursor = collection.find();
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
 
+            System.out.println(getSHVenueAddress(obj));
+            //System.out.println(address);
+            //System.out.println("---------------");
 
             if (getSHDateTime(obj).equals(dateTime)) {
-                System.out.println(getSHVenueCoordinates(obj,true));
-                System.out.println(latitude);
-                System.out.println("---------------");
-                if (getSHVenueCoordinates(obj,true).equals(latitude)) {
+                if (getSHVenueAddress(obj).equals(address)) {
                     System.out.println("2");
-                    if (getSHVenueCoordinates(obj, false).equals(longitude)) {
-                        System.out.println("3");
-                        return obj;
-                    }
+                    return obj;
                 }
+                //if (getSHVenueCoordinates(obj,true).equals(latitude)) {
+                    //System.out.println("2");
+                    //if (getSHVenueCoordinates(obj, false).equals(longitude)) {
+                        //System.out.println("3");
+                        //return obj;
+                    //}
+                //}
             }
         }
         return null;
@@ -81,6 +84,7 @@ public class Ticketmaster_Events extends Algorithm {
     /*
      * Return the venue's latitude/longitude coordinates.
      */
+    /*
     private String getTMVenueCoordinates(DBObject obj, boolean latitude) {
         try {
             JSONObject json = new JSONObject(obj.toString());
@@ -95,6 +99,33 @@ public class Ticketmaster_Events extends Algorithm {
             }
         } catch (Exception e) {
             System.out.println("Could not retrieve venue's latitude on Ticketmaster...");
+            return "Fail";
+        }
+    }
+    */
+
+
+    /*
+     * Return the venue's address.
+     */
+    private String getTMVenueAddress(DBObject obj) {
+        try {
+            JSONObject json = new JSONObject(obj.toString());
+            JSONObject embedded = json.getJSONObject("_embedded");
+            JSONArray venues = embedded.getJSONArray("venues");
+
+            JSONObject address = venues.getJSONObject(0).getJSONObject("address");
+            JSONObject city = venues.getJSONObject(0).getJSONObject("city");
+            JSONObject state = venues.getJSONObject(0).getJSONObject("state");
+
+            String sb = "";
+            sb += address.get("line1").toString();
+            sb += city.get("name").toString();
+            sb += state.get("stateCode").toString();
+
+            return sb;
+        } catch (Exception e) {
+            System.out.println("Could not retrieve venue's address...");
             return "Fail";
         }
     }
@@ -121,6 +152,7 @@ public class Ticketmaster_Events extends Algorithm {
     /*
      * Return the venue's latitude/longitude coordinates.
      */
+    /*
     private String getSHVenueCoordinates(DBObject obj, boolean latitude) {
         try {
             JSONObject json = new JSONObject(obj.toString());
@@ -133,6 +165,28 @@ public class Ticketmaster_Events extends Algorithm {
             }
         } catch (Exception e) {
             System.out.println("Could not retrieve venue's latitude on StubHub...");
+            return "Fail";
+        }
+    }
+    */
+
+
+    /*
+     * Return the venue's address.
+     */
+    private String getSHVenueAddress(DBObject obj) {
+        try {
+            JSONObject json = new JSONObject(obj.toString());
+            JSONObject venue = json.getJSONObject("venue");
+
+            String sb = "";
+            sb += venue.get("address1").toString();
+            sb += venue.get("city").toString();
+            sb += venue.get("state").toString();
+
+            return sb;
+        } catch (Exception e) {
+            System.out.println("Could not retrieve venue's address...");
             return "Fail";
         }
     }
